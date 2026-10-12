@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>AI 知識庫 - 手機收藏助手</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#121316">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <style>
+    :root {
+      --bg-primary: #121316;
+      --bg-card: #1e1f24;
+      --bg-input: #282a30;
+      --text-primary: #f0f3f6;
+      --text-secondary: #9aa0a6;
+      --accent: #3b82f6;
+      --accent-hover: #2563eb;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --border: #33363f;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      padding: 16px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .logo-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-icon {
+      font-size: 24px;
+    }
+
+    .title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .btn-settings {
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      font-size: 20px;
+      cursor: pointer;
+      padding: 6px;
+    }
+
+    .card {
+      background: var(--bg-card);
+      border-radius: 14px;
+      padding: 16px;
+      border: 1px solid var(--border);
+      margin-bottom: 14px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .field-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .platform-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 8px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+      background: #2a2d36;
+      color: #8ab4f8;
+    }
+    .platform-badge.youtube { background: #4c1d1d; color: #ff8080; }
+    .platform-badge.instagram { background: #4c1d3d; color: #f472b6; }
+    .platform-badge.threads { background: #262626; color: #e5e5e5; }
+    .platform-badge.facebook { background: #1e3a5f; color: #60a5fa; }
+
+    .input-box {
+      width: 100%;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 12px;
+      color: #fff;
+      font-size: 14px;
+      outline: none;
+      transition: border 0.2s;
+    }
+    .input-box:focus {
+      border-color: var(--accent);
+    }
+
+    textarea.input-box {
+      resize: none;
+    }
+
+    .category-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 6px;
+    }
+
+    .chip-btn {
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      padding: 7px 12px;
+      border-radius: 20px;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .chip-btn.active {
+      background: #1e3a8a;
+      border-color: var(--accent);
+      color: #93c5fd;
+      font-weight: 600;
+    }
+
+    .btn-submit {
+      width: 100%;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      padding: 14px;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 4px 14px rgba(59, 130, 246, 0.4);
+      transition: background 0.2s, transform 0.1s;
+      margin-top: 6px;
+    }
+    .btn-submit:active {
+      transform: scale(0.98);
+      background: var(--accent-hover);
+    }
+    .btn-submit:disabled {
+      background: #475569;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    .status-banner {
+      display: none;
+      padding: 12px;
+      border-radius: 10px;
+      font-size: 13px;
+      margin-bottom: 14px;
+      align-items: center;
+      gap: 8px;
+    }
+    .status-banner.success {
+      background: #064e3b;
+      color: #a7f3d0;
+      border: 1px solid #059669;
+      display: flex;
+    }
+    .status-banner.error {
+      background: #7f1d1d;
+      color: #fecaca;
+      border: 1px solid #dc2626;
+      display: flex;
+    }
+
+    /* 設定彈窗 */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(4px);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .modal-card {
+      background: var(--bg-card);
+      border-radius: 16px;
+      padding: 20px;
+      width: 100%;
+      max-width: 360px;
+      border: 1px solid var(--border);
+    }
+
+    .tip-box {
+      font-size: 12px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      margin-top: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 頂部列 -->
+  <header class="header">
+    <div class="logo-group">
+      <span class="logo-icon">⚡</span>
+      <span class="title">AI 知識庫收藏</span>
+    </div>
+    <button class="btn-settings" id="btn-open-settings" title="設定雲端網址">⚙️</button>
+  </header>
+
+  <!-- 狀態提示列 -->
+  <div class="status-banner" id="status-banner">
+    <span id="status-icon">✅</span>
+    <span id="status-text">已成功收藏！</span>
+  </div>
+
+  <!-- 主卡片：分享內容解析 -->
+  <div class="card">
+    <div class="field-label">
+      <span>來源平台與網址</span>
+      <span class="platform-badge" id="badge-platform">🌐 網頁</span>
+    </div>
+    <input type="url" id="input-url" class="input-box" placeholder="https://..." style="margin-bottom: 12px;">
+
+    <div class="field-label">
+      <span>標題 / 分享文字</span>
+    </div>
+    <textarea id="input-title" class="input-box" rows="2" placeholder="內容標題或引述文字..."></textarea>
+  </div>
+
+  <!-- 分類卡片 -->
+  <div class="card">
+    <div class="field-label">
+      <span>選擇知識庫分類</span>
+      <span style="font-size: 11px; color: #60a5fa;" id="auto-tag-hint">✨ 已智慧預選</span>
+    </div>
+    <div class="category-chips" id="category-chips">
+      <button type="button" class="chip-btn" data-cat="BIM／Revit">📐 BIM／Revit</button>
+      <button type="button" class="chip-btn" data-cat="AI Agent／MCP">🤖 AI Agent／MCP</button>
+      <button type="button" class="chip-btn" data-cat="Python／程式開發">🐍 Python／程式開發</button>
+      <button type="button" class="chip-btn" data-cat="AI 工具與新技術">💡 AI 工具與新技術</button>
+      <button type="button" class="chip-btn" data-cat="其他">📁 其他</button>
+    </div>
+  </div>
+
+  <!-- 個人備註卡片 -->
+  <div class="card">
+    <div class="field-label">
+      <span>個人備註（選填）</span>
+    </div>
+    <input type="text" id="input-note" class="input-box" placeholder="例如：這篇技巧要給團隊參考、待實測...">
+  </div>
+
+  <!-- 送出按鈕 -->
+  <button class="btn-submit" id="btn-submit">
+    <span>💾 一鍵收藏至 AI 知識庫</span>
+  </button>
+
+  <!-- 設定彈窗 -->
+  <div class="modal-overlay" id="settings-modal">
+    <div class="modal-card">
+      <h3 style="margin-bottom: 12px; font-size: 16px;">⚙️ 雲端同步設定</h3>
+      <div class="field-label">Google Apps Script 網頁應用程式網址</div>
+      <input type="url" id="setting-gas-url" class="input-box" placeholder="https://script.google.com/macros/s/.../exec">
+      <div class="tip-box">
+        貼上您在 Google 試算表部屬的 Apps Script 網頁應用程式網址，手機即可直通雲端試算表。
+      </div>
+      <div style="display: flex; gap: 10px; margin-top: 16px;">
+        <button id="btn-close-settings" class="input-box" style="width: 50%; cursor: pointer;">取消</button>
+        <button id="btn-save-settings" class="btn-submit" style="width: 50%; padding: 10px; margin: 0;">儲存</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 註冊 Service Worker
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("./sw.js").catch(console.error);
+    }
+
+    const inputUrl = document.getElementById("input-url");
+    const inputTitle = document.getElementById("input-title");
+    const inputNote = document.getElementById("input-note");
+    const badgePlatform = document.getElementById("badge-platform");
+    const categoryChips = document.getElementById("category-chips");
+    const btnSubmit = document.getElementById("btn-submit");
+    const statusBanner = document.getElementById("status-banner");
+    const statusIcon = document.getElementById("status-icon");
+    const statusText = document.getElementById("status-text");
+
+    const settingsModal = document.getElementById("settings-modal");
+    const btnOpenSettings = document.getElementById("btn-open-settings");
+    const btnCloseSettings = document.getElementById("btn-close-settings");
+    const btnSaveSettings = document.getElementById("btn-save-settings");
+    const settingGasUrl = document.getElementById("setting-gas-url");
+
+    let selectedCategory = "AI 工具與新技術";
+    let detectedPlatform = "網頁";
+
+    // 1. 讀取與儲存 GAS 網址
+    let gasApiUrl = localStorage.getItem("ai_knowledge_gas_url") || "";
+    settingGasUrl.value = gasApiUrl;
+
+    btnOpenSettings.addEventListener("click", () => settingsModal.style.display = "flex");
+    btnCloseSettings.addEventListener("click", () => settingsModal.style.display = "none");
+    btnSaveSettings.addEventListener("click", () => {
+      gasApiUrl = settingGasUrl.value.trim();
+      localStorage.setItem("ai_knowledge_gas_url", gasApiUrl);
+      settingsModal.style.display = "none";
+      showBanner("success", "✅ 雲端設定已儲存！");
+    });
+
+    // 2. 解析來自 Android 系統分享的 Query 參數 (Web Share Target)
+    function parseShareTarget() {
+      const params = new URLSearchParams(window.location.search);
+      const rawTitle = params.get("title") || "";
+      const rawText = params.get("text") || "";
+      const rawUrl = params.get("url") || "";
+
+      const fullContent = [rawTitle, rawText, rawUrl].filter(Boolean).join(" ");
+      
+      // 從字串中萃取出 HTTP/HTTPS 網址（特別支援 IG/Threads/FB/YouTube）
+      const urlRegex = /(https?:\/\/[^\s]+)/gi;
+      const match = fullContent.match(urlRegex);
+      
+      let finalUrl = "";
+      if (rawUrl && rawUrl.startsWith("http")) {
+        finalUrl = rawUrl;
+      } else if (match && match.length > 0) {
+        finalUrl = match[0];
+      }
+
+      // 清理並去除多餘的網址，剩下的當標題
+      let cleanText = fullContent.replace(urlRegex, "").trim();
+      if (!cleanText) cleanText = rawTitle || "社群分享內容";
+
+      inputUrl.value = finalUrl;
+      inputTitle.value = cleanText;
+
+      // 自動識別平台
+      identifyPlatform(finalUrl);
+
+      // 自動智慧推薦分類
+      autoPredictCategory(finalUrl + " " + cleanText);
+    }
+
+    function identifyPlatform(url) {
+      const u = (url || "").toLowerCase();
+      badgePlatform.className = "platform-badge";
+      if (u.includes("youtube.com") || u.includes("youtu.be")) {
+        detectedPlatform = "YouTube";
+        badgePlatform.innerText = "🔴 YouTube";
+        badgePlatform.classList.add("youtube");
+      } else if (u.includes("instagram.com")) {
+        detectedPlatform = "Instagram";
+        badgePlatform.innerText = "🟣 Instagram";
+        badgePlatform.classList.add("instagram");
+      } else if (u.includes("threads.net")) {
+        detectedPlatform = "Threads";
+        badgePlatform.innerText = "⚫ Threads";
+        badgePlatform.classList.add("threads");
+      } else if (u.includes("facebook.com") || u.includes("fb.watch") || u.includes("fb.me")) {
+        detectedPlatform = "Facebook";
+        badgePlatform.innerText = "🔵 Facebook";
+        badgePlatform.classList.add("facebook");
+      } else {
+        detectedPlatform = "網頁";
+        badgePlatform.innerText = "🌐 一般網頁";
+      }
+    }
+
+    function autoPredictCategory(content) {
+      const text = content.toLowerCase();
+      let target = "其他";
+
+      if (/bim|revit|dynamo|navisworks|ifc|建築資訊模型/i.test(text)) {
+        target = "BIM／Revit";
+      } else if (/mcp|agent|claude|chatgpt|gpt|智能體|提示詞|llm|anthropic/i.test(text)) {
+        target = "AI Agent／MCP";
+      } else if (/python|腳本|程式|code|github|pip|pandas|fastapi/i.test(text)) {
+        target = "Python／程式開發";
+      } else if (/ai|gemini|deepseek|midjourney|sora|模型|新技術/i.test(text)) {
+        target = "AI 工具與新技術";
+      }
+
+      setCategory(target);
+    }
+
+    function setCategory(cat) {
+      selectedCategory = cat;
+      document.querySelectorAll(".chip-btn").forEach(btn => {
+        if (btn.dataset.cat === cat) {
+          btn.classList.add("active");
+        } else {
+          btn.classList.remove("active");
+        }
+      });
+    }
+
+    // 分類點擊切換
+    categoryChips.addEventListener("click", (e) => {
+      const btn = e.target.closest(".chip-btn");
+      if (btn) {
+        setCategory(btn.dataset.cat);
+        document.getElementById("auto-tag-hint").innerText = "手動已選";
+      }
+    });
+
+    // 網址變更手動輸入時重新檢測
+    inputUrl.addEventListener("input", (e) => identifyPlatform(e.target.value));
+
+    // 3. 一鍵送出收藏
+    btnSubmit.addEventListener("click", async () => {
+      const url = inputUrl.value.trim();
+      if (!url) {
+        showBanner("error", "⚠️ 請輸入或分享有效的網址！");
+        return;
+      }
+
+      if (!gasApiUrl) {
+        settingsModal.style.display = "flex";
+        showBanner("error", "請先設定 Google Apps Script 雲端網址！");
+        return;
+      }
+
+      btnSubmit.disabled = true;
+      btnSubmit.innerHTML = "<span>⏳ 正在存入雲端知識庫...</span>";
+
+      const payload = {
+        url: url,
+        title: inputTitle.value.trim(),
+        platform: detectedPlatform,
+        category: selectedCategory,
+        note: inputNote.value.trim(),
+        rawText: inputTitle.value.trim(),
+        aiStatus: "PENDING"
+      };
+
+      try {
+        const response = await fetch(gasApiUrl, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain;charset=utf-8" }, // 避免 CORS 預檢限制
+          body: JSON.stringify(payload)
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+          showBanner("success", result.isDuplicate ? "💡 " + result.message : "🎉 " + result.message);
+          btnSubmit.innerHTML = "<span>✅ 收藏完成！</span>";
+          btnSubmit.style.background = "#10b981";
+
+          // 2.5 秒後如果是在獨立視窗可自動關閉或返回
+          setTimeout(() => {
+            if (window.history.length > 1) {
+              window.history.back();
+            }
+          }, 2500);
+        } else {
+          throw new Error(result.error || "儲存失敗");
+        }
+      } catch (err) {
+        showBanner("error", "❌ 儲存失敗：" + err.message);
+        btnSubmit.disabled = false;
+        btnSubmit.innerHTML = "<span>💾 重試儲存</span>";
+      }
+    });
+
+    function showBanner(type, msg) {
+      statusBanner.className = "status-banner " + type;
+      statusText.innerText = msg;
+      statusBanner.style.display = "flex";
+    }
+
+    // 初始化執行
+    parseShareTarget();
+  </script>
+</body>
+</html>
