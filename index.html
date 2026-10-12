@@ -348,6 +348,8 @@
     });
 
     // 2. 解析來自 Android 系統分享的 Query 參數 (Web Share Target)
+    let autoSaveTimer = null;
+
     function parseShareTarget() {
       const params = new URLSearchParams(window.location.search);
       const rawTitle = params.get("title") || "";
@@ -355,6 +357,7 @@
       const rawUrl = params.get("url") || "";
 
       const fullContent = [rawTitle, rawText, rawUrl].filter(Boolean).join(" ");
+      if (!fullContent) return; // 若是一般打開網頁，不自動執行
       
       // 從字串中萃取出 HTTP/HTTPS 網址（特別支援 IG/Threads/FB/YouTube）
       const urlRegex = /(https?:\/\/[^\s]+)/gi;
@@ -369,7 +372,7 @@
 
       // 清理並去除多餘的網址，剩下的當標題
       let cleanText = fullContent.replace(urlRegex, "").trim();
-      if (!cleanText) cleanText = rawTitle || "社群分享內容";
+      if (!cleanText) cleanText = rawTitle || "";
 
       inputUrl.value = finalUrl;
       inputTitle.value = cleanText;
@@ -377,46 +380,48 @@
       // 自動識別平台
       identifyPlatform(finalUrl);
 
-      // 自動智慧推薦分類
+      // 自動智慧推薦分類（若無法判斷，預設標記為「待 AI 智慧分類」，不粗暴丟給其他）
       autoPredictCategory(finalUrl + " " + cleanText);
+
+      // ⚡ 關鍵功能：【極速自動分享－無需再按儲存】
+      if (finalUrl) {
+        triggerInstantAutoSave();
+      }
     }
 
-    function identifyPlatform(url) {
-      const u = (url || "").toLowerCase();
-      badgePlatform.className = "platform-badge";
-      if (u.includes("youtube.com") || u.includes("youtu.be")) {
-        detectedPlatform = "YouTube";
-        badgePlatform.innerText = "🔴 YouTube";
-        badgePlatform.classList.add("youtube");
-      } else if (u.includes("instagram.com")) {
-        detectedPlatform = "Instagram";
-        badgePlatform.innerText = "🟣 Instagram";
-        badgePlatform.classList.add("instagram");
-      } else if (u.includes("threads.net")) {
-        detectedPlatform = "Threads";
-        badgePlatform.innerText = "⚫ Threads";
-        badgePlatform.classList.add("threads");
-      } else if (u.includes("facebook.com") || u.includes("fb.watch") || u.includes("fb.me")) {
-        detectedPlatform = "Facebook";
-        badgePlatform.innerText = "🔵 Facebook";
-        badgePlatform.classList.add("facebook");
-      } else {
-        detectedPlatform = "網頁";
-        badgePlatform.innerText = "🌐 一般網頁";
+    function triggerInstantAutoSave() {
+      showBanner("success", "⚡ 正在為您自動快速收藏...（點畫面可取消暫停）");
+      btnSubmit.innerHTML = "<span>⚡ 自動快速儲存中...</span>";
+      
+      // 點擊畫面任何地方可取消自動關閉，方便手動填備註
+      document.body.addEventListener("click", cancelAutoSaveOnce, { once: true });
+
+      autoSaveTimer = setTimeout(() => {
+        btnSubmit.click();
+      }, 1000); // 1 秒後全自動儲存並關閉
+    }
+
+    function cancelAutoSaveOnce() {
+      if (autoSaveTimer) {
+        clearTimeout(autoSaveTimer);
+        autoSaveTimer = null;
+        showBanner("success", "已暫停自動儲存，您可以手動調整分類或輸入備註。");
+        btnSubmit.innerHTML = "<span>💾 一鍵收藏至 AI 知識庫</span>";
       }
     }
 
     function autoPredictCategory(content) {
       const text = content.toLowerCase();
-      let target = "其他";
+      // 根據您的核心需求與這10筆範例（ECC, Claude Code, MCP, AI 工具）：預設優先匹配
+      let target = "待 AI 自動分類";
 
-      if (/bim|revit|dynamo|navisworks|ifc|建築資訊模型/i.test(text)) {
+      if (/bim|revit|dynamo|navisworks|ifc|建築/i.test(text)) {
         target = "BIM／Revit";
-      } else if (/mcp|agent|claude|chatgpt|gpt|智能體|提示詞|llm|anthropic/i.test(text)) {
+      } else if (/mcp|agent|claude|chatgpt|codex|ecc|cursor|智能體|外掛|workflow/i.test(text)) {
         target = "AI Agent／MCP";
       } else if (/python|腳本|程式|code|github|pip|pandas|fastapi/i.test(text)) {
         target = "Python／程式開發";
-      } else if (/ai|gemini|deepseek|midjourney|sora|模型|新技術/i.test(text)) {
+      } else if (/ai|gemini|deepseek|sora|工具|開源|教學/i.test(text)) {
         target = "AI 工具與新技術";
       }
 
