@@ -1,5 +1,5 @@
 // AI 知識庫 PWA Service Worker
-const CACHE_NAME = "ai-collector-v1";
+const CACHE_NAME = "ai-collector-v2";
 const ASSETS = [
   "./",
   "./index.html",

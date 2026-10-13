@@ -297,12 +297,32 @@
   <div class="modal-overlay" id="settings-modal">
     <div class="modal-card">
       <h3 style="margin-bottom: 12px; font-size: 16px;">⚙️ 雲端同步設定</h3>
-      <div class="field-label">Google Apps Script 網頁應用程式網址</div>
+
+      <!-- 模式 1: 共同雲端代碼 (預設，免 Google 試算表) -->
+      <div class="field-label">
+        <span>🌐 共同雲端代碼 (免設定試算表)</span>
+        <span style="color:#10b981; font-size:10px;">🟢 預設推薦</span>
+      </div>
+      <input type="text" id="setting-vault-id" class="input-box" placeholder="例如: ff808181a09d98f701a134941a4a52d4">
+      <div class="tip-box">
+        手機與電腦只要填寫相同的雲端代碼（已預設配對），點分享就能直通電腦筆記庫！
+      </div>
+
+      <!-- 模式 2: 自訂 Google Apps Script (選填) -->
+      <div class="field-label" style="margin-top: 12px;">
+        <span>📊 Google Apps Script 網址 (選填)</span>
+      </div>
       <input type="url" id="setting-gas-url" class="input-box" placeholder="https://script.google.com/macros/s/.../exec">
       <div class="tip-box">
-        貼上您在 Google 試算表部屬的 Apps Script 網頁應用程式網址，手機即可直通雲端試算表。
+        若您懶得設定 Google 試算表，保持空白即可，系統會自動使用上方的共同雲端！
       </div>
-      <div style="display: flex; gap: 10px; margin-top: 16px;">
+
+      <div style="display: flex; gap: 8px; margin-top: 12px;">
+        <button id="btn-test-cloud-pwa" type="button" class="input-box" style="flex: 1; cursor: pointer; background: #2a2d36; color: #8ab4f8; border: 1px solid #3b82f6;">⚡ 測試連線</button>
+        <button id="btn-gen-vault-pwa" type="button" class="input-box" style="flex: 1; cursor: pointer; background: #2a2d36; color: #a7f3d0; border: 1px solid #10b981;">🎲 產生新代碼</button>
+      </div>
+      <div id="pwa-test-msg" style="font-size: 11px; margin-top: 6px; display: none; line-height: 1.4;"></div>
+      <div style="display: flex; gap: 10px; margin-top: 14px;">
         <button id="btn-close-settings" class="input-box" style="width: 50%; cursor: pointer;">取消</button>
         <button id="btn-save-settings" class="btn-submit" style="width: 50%; padding: 10px; margin: 0;">儲存</button>
       </div>
@@ -329,23 +349,113 @@
     const btnOpenSettings = document.getElementById("btn-open-settings");
     const btnCloseSettings = document.getElementById("btn-close-settings");
     const btnSaveSettings = document.getElementById("btn-save-settings");
+    const settingVaultId = document.getElementById("setting-vault-id");
     const settingGasUrl = document.getElementById("setting-gas-url");
+    const btnTestCloudPwa = document.getElementById("btn-test-cloud-pwa");
+    const btnGenVaultPwa = document.getElementById("btn-gen-vault-pwa");
+    const pwaTestMsg = document.getElementById("pwa-test-msg");
 
     let selectedCategory = "AI 工具與新技術";
     let detectedPlatform = "網頁";
 
-    // 1. 讀取與儲存 GAS 網址
+    const DEFAULT_VAULT_ID = "ff808181a09d98f701a134941a4a52d4";
+    let cloudVaultId = localStorage.getItem("ai_cloud_vault_id") || DEFAULT_VAULT_ID;
     let gasApiUrl = localStorage.getItem("ai_knowledge_gas_url") || "";
-    settingGasUrl.value = gasApiUrl;
 
-    btnOpenSettings.addEventListener("click", () => settingsModal.style.display = "flex");
+    if (settingVaultId) settingVaultId.value = cloudVaultId;
+    if (settingGasUrl) settingGasUrl.value = gasApiUrl;
+
+    btnOpenSettings.addEventListener("click", () => {
+      if (pwaTestMsg) pwaTestMsg.style.display = "none";
+      if (settingVaultId) settingVaultId.value = cloudVaultId;
+      if (settingGasUrl) settingGasUrl.value = gasApiUrl;
+      settingsModal.style.display = "flex";
+    });
     btnCloseSettings.addEventListener("click", () => settingsModal.style.display = "none");
+
     btnSaveSettings.addEventListener("click", () => {
-      gasApiUrl = settingGasUrl.value.trim();
+      cloudVaultId = (settingVaultId.value || "").trim() || DEFAULT_VAULT_ID;
+      gasApiUrl = (settingGasUrl.value || "").trim();
+      localStorage.setItem("ai_cloud_vault_id", cloudVaultId);
       localStorage.setItem("ai_knowledge_gas_url", gasApiUrl);
       settingsModal.style.display = "none";
       showBanner("success", "✅ 雲端設定已儲存！");
     });
+
+    // 產生新代碼
+    if (btnGenVaultPwa) {
+      btnGenVaultPwa.addEventListener("click", async () => {
+        if (!confirm("是否產生全新的共同雲端代碼？（電腦端也需要輸入此代碼以保持同步）")) return;
+        pwaTestMsg.style.display = "block";
+        pwaTestMsg.style.color = "#93c5fd";
+        pwaTestMsg.innerText = "⏳ 正在建立新金鑰...";
+        try {
+          const resp = await fetch("https://api.restful-api.dev/objects", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              name: "jim279ss_ai_notes_vault",
+              data: {
+                vaultName: "AI知識庫手機收藏共同雲端",
+                updatedAt: new Date().toLocaleString("zh-TW"),
+                notes: []
+              }
+            })
+          });
+          if (!resp.ok) throw new Error("HTTP " + resp.status);
+          const data = await resp.json();
+          if (data && data.id) {
+            settingVaultId.value = data.id;
+            pwaTestMsg.style.color = "#a7f3d0";
+            pwaTestMsg.innerText = `✅ 新代碼建立成功！請點擊「儲存」，並將此代碼填入電腦端。`;
+          }
+        } catch (e) {
+          pwaTestMsg.style.color = "#fecaca";
+          pwaTestMsg.innerText = `❌ 建立失敗: ${e.message}`;
+        }
+      });
+    }
+
+    // 測試連線
+    if (btnTestCloudPwa) {
+      btnTestCloudPwa.addEventListener("click", async () => {
+        const testGas = (settingGasUrl.value || "").trim();
+        const testVault = (settingVaultId.value || "").trim() || DEFAULT_VAULT_ID;
+
+        pwaTestMsg.style.display = "block";
+        pwaTestMsg.style.color = "#93c5fd";
+        pwaTestMsg.innerText = "⏳ 正在測試雲端連線...";
+
+        if (testGas && testGas.startsWith("http")) {
+          try {
+            const resp = await fetch(testGas, { method: "GET" });
+            if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+            const res = await resp.json();
+            if (res && res.success) {
+              pwaTestMsg.style.color = "#a7f3d0";
+              pwaTestMsg.innerText = `✅ Google 試算表連線成功！現有 ${res.notes ? res.notes.length : 0} 筆記錄。`;
+            } else {
+              throw new Error(res.error || "回傳異常");
+            }
+          } catch (e) {
+            pwaTestMsg.style.color = "#fecaca";
+            pwaTestMsg.innerText = `❌ 試算表連線失敗: ${e.message}。若懶得設定試算表，可清空此欄位直接使用共同雲端。`;
+          }
+        } else {
+          try {
+            const resp = await fetch(`https://api.restful-api.dev/objects/${testVault}`);
+            if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+            const res = await resp.json();
+            const count = (res && res.data && Array.isArray(res.data.notes)) ? res.data.notes.length : 0;
+            pwaTestMsg.style.color = "#a7f3d0";
+            pwaTestMsg.innerText = `✅ 共同雲端連線正常！現有 ${count} 筆收藏記錄（免試算表，直接可通）。`;
+          } catch (e) {
+            pwaTestMsg.style.color = "#fecaca";
+            pwaTestMsg.innerText = `❌ 共同雲端連線失敗: ${e.message}。可點擊「產生新代碼」建立新空間。`;
+          }
+        }
+      });
+    }
 
     // 2. 解析來自 Android 系統分享的 Query 參數 (Web Share Target)
     let autoSaveTimer = null;
@@ -383,7 +493,7 @@
       // 自動智慧推薦分類（若無法判斷，預設標記為「待 AI 智慧分類」，不粗暴丟給其他）
       autoPredictCategory(finalUrl + " " + cleanText);
 
-      // ⚡ 關鍵功能：【極速自動分享－無需再按儲存】
+      // ⚡ 關鍵功能：【極速自動分享－預設使用共同雲端代碼自動儲存】
       if (finalUrl) {
         triggerInstantAutoSave();
       }
@@ -412,7 +522,7 @@
 
     function autoPredictCategory(content) {
       const text = content.toLowerCase();
-      // 根據您的核心需求與這10筆範例（ECC, Claude Code, MCP, AI 工具）：預設優先匹配
+      // 根據您的核心需求與範例：預設優先匹配
       let target = "待 AI 自動分類";
 
       if (/bim|revit|dynamo|navisworks|ifc|建築/i.test(text)) {
@@ -474,34 +584,65 @@
       };
 
       try {
-        if (gasApiUrl) {
+        if (gasApiUrl && gasApiUrl.trim().startsWith("http")) {
           // 使用自訂 Google Apps Script 雲端
-          const response = await fetch(gasApiUrl, {
+          const response = await fetch(gasApiUrl.trim(), {
             method: "POST",
             headers: { "Content-Type": "text/plain;charset=utf-8" },
             body: JSON.stringify(payload)
           });
           const result = await response.json();
           if (!result.success) throw new Error(result.error || "儲存失敗");
+
+          showBanner("success", "🎉 收藏成功！已寫入 Google 試算表");
         } else {
-          // 預設免設定專屬雲端儲存庫
-          const response = await fetch("https://api.restful-api.dev/objects", {
-            method: "POST",
+          // 預設模式：共同雲端 (免 Google 試算表，直接可通)
+          const vaultUrl = `https://api.restful-api.dev/objects/${cloudVaultId}`;
+          let existingNotes = [];
+          try {
+            const resp = await fetch(vaultUrl);
+            if (resp.ok) {
+              const json = await resp.json();
+              if (json && json.data && Array.isArray(json.data.notes)) {
+                existingNotes = json.data.notes;
+              }
+            }
+          } catch (e) {
+            console.warn("讀取共同雲端既有筆記失敗:", e);
+          }
+
+          // 網址排重檢查
+          const dupIdx = existingNotes.findIndex(n => n.url === payload.url);
+          if (dupIdx !== -1) {
+            if (payload.note) {
+              existingNotes[dupIdx].note = existingNotes[dupIdx].note ? (existingNotes[dupIdx].note + " | " + payload.note) : payload.note;
+            }
+          } else {
+            existingNotes.unshift({ id: "note_" + Date.now(), ...payload });
+          }
+
+          const putResp = await fetch(vaultUrl, {
+            method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-              name: "jim279ss_ai_knowledge_note",
-              data: payload
+              name: "jim279ss_ai_notes_vault",
+              data: {
+                vaultName: "AI知識庫手機收藏共同雲端",
+                updatedAt: new Date().toLocaleString("zh-TW"),
+                notes: existingNotes.slice(0, 150)
+              }
             })
           });
-          if (!response.ok) throw new Error("雲端儲存失敗");
-          const resData = await response.json();
-          // 本機亦同步保留一份
+          if (!putResp.ok) throw new Error(`共同雲端寫入失敗 (HTTP ${putResp.status})`);
+
+          // 本地亦同步備份一份
           const localNotes = JSON.parse(localStorage.getItem("ai_local_notes") || "[]");
-          localNotes.unshift({ id: resData.id, ...payload });
+          localNotes.unshift({ id: "note_" + Date.now(), ...payload });
           localStorage.setItem("ai_local_notes", JSON.stringify(localNotes.slice(0, 100)));
+
+          showBanner("success", "🎉 收藏成功！已存入共同雲端知識庫");
         }
 
-        showBanner("success", "🎉 收藏成功！已存入雲端知識庫");
         btnSubmit.innerHTML = "<span>✅ 收藏完成！</span>";
         btnSubmit.style.background = "#10b981";
 
@@ -514,6 +655,7 @@
         showBanner("error", "❌ 儲存失敗：" + err.message);
         btnSubmit.disabled = false;
         btnSubmit.innerHTML = "<span>💾 重試儲存</span>";
+        btnSubmit.style.background = "#dc2626";
       }
     });
 
