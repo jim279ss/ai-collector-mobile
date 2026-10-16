@@ -1,5 +1,5 @@
-// AI 知識庫 PWA Service Worker
-const CACHE_NAME = "ai-collector-v2";
+// AI 知識庫 PWA Service Worker (v5 - Network First 防卡舊版快取)
+const CACHE_NAME = "ai-collector-v5";
 const ASSETS = [
   "./",
   "./index.html",
@@ -9,8 +9,9 @@ const ASSETS = [
 ];
 
 self.addEventListener("install", (e) => {
+  self.skipWaiting();
   e.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS)).then(() => self.skipWaiting())
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS))
   );
 });
 
@@ -27,21 +28,29 @@ self.addEventListener("activate", (e) => {
 });
 
 self.addEventListener("fetch", (e) => {
-  // 對於跨域 API（如 Google Apps Script），直接透過網路發送，不走快取
+  // 跨域 API (ntfy.sh / restful-api.dev / script.google.com) 直接走網路
   if (!e.request.url.startsWith(self.location.origin)) {
     return;
   }
 
-  // 對於 share_target GET 請求（帶 query 參數），一律回傳快取的 index.html
   const url = new URL(e.request.url);
-  if (url.pathname.endsWith("index.html") || url.pathname.endsWith("/")) {
+  // 對 HTML 頁面採 Network-First（網路優先，斷網才退回快取），確保手機永遠載入最新版程式
+  if (e.request.mode === "navigate" || url.pathname.endsWith("index.html") || url.pathname.endsWith("/")) {
     e.respondWith(
-      caches.match("./index.html").then((response) => response || fetch(e.request))
+      fetch(e.request, { cache: "no-store" })
+        .then((networkResp) => {
+          if (networkResp && networkResp.ok) {
+            const clone = networkResp.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put("./index.html", clone));
+          }
+          return networkResp;
+        })
+        .catch(() => caches.match("./index.html"))
     );
     return;
   }
 
   e.respondWith(
-    caches.match(e.request).then((response) => response || fetch(e.request))
+    fetch(e.request).catch(() => caches.match(e.request))
   );
 });

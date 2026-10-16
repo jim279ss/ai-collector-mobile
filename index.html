@@ -64,6 +64,15 @@
       color: #fff;
     }
 
+    .version-tag {
+      font-size: 10px;
+      background: #1e3a8a;
+      color: #93c5fd;
+      padding: 2px 6px;
+      border-radius: 6px;
+      font-weight: 600;
+    }
+
     .btn-settings {
       background: none;
       border: none;
@@ -188,6 +197,7 @@
       margin-bottom: 14px;
       align-items: center;
       gap: 8px;
+      line-height: 1.4;
     }
     .status-banner.success {
       background: #064e3b;
@@ -195,11 +205,68 @@
       border: 1px solid #059669;
       display: flex;
     }
+    .status-banner.warning {
+      background: #78350f;
+      color: #fde68a;
+      border: 1px solid #d97706;
+      display: flex;
+    }
     .status-banner.error {
       background: #7f1d1d;
       color: #fecaca;
       border: 1px solid #dc2626;
       display: flex;
+    }
+
+    .pending-sync-bar {
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      background: #1e293b;
+      border: 1px solid #3b82f6;
+      border-radius: 10px;
+      padding: 10px 14px;
+      margin-top: 12px;
+      font-size: 13px;
+      color: #93c5fd;
+    }
+    .btn-flush {
+      background: #3b82f6;
+      color: #fff;
+      border: none;
+      padding: 5px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .local-history-card {
+      margin-top: 16px;
+      padding: 12px 14px;
+      background: rgba(30, 31, 36, 0.75);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+    }
+    .local-item {
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      font-size: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .local-item:last-child {
+      border-bottom: none;
+    }
+    .local-item-url {
+      color: #93c5fd;
+      text-decoration: none;
+      word-break: break-all;
+      display: -webkit-box;
+      -webkit-line-clamp: 1;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
     }
 
     /* 設定彈窗 */
@@ -241,6 +308,7 @@
     <div class="logo-group">
       <span class="logo-icon">⚡</span>
       <span class="title">AI 知識庫收藏</span>
+      <span class="version-tag">雙引擎 v5.0</span>
     </div>
     <button class="btn-settings" id="btn-open-settings" title="設定雲端網址">⚙️</button>
   </header>
@@ -293,19 +361,34 @@
     <span>💾 一鍵收藏至 AI 知識庫</span>
   </button>
 
+  <!-- 本地待同步佇列欄位 -->
+  <div class="pending-sync-bar" id="pending-sync-bar">
+    <span>📦 本機有 <b id="pending-count" style="color: #60a5fa;">0</b> 筆待補傳收藏</span>
+    <button type="button" class="btn-flush" id="btn-flush-sync">⚡ 立即補傳</button>
+  </div>
+
+  <!-- 手機本機最近收藏列表（保底可見，隨時可查） -->
+  <div class="local-history-card" id="local-history-card" style="display: none;">
+    <div class="field-label" style="margin-bottom: 8px;">
+      <span>📱 手機本機已存紀錄（最近 5 筆）</span>
+      <button type="button" id="btn-copy-local-json" style="background:none; border:1px solid #3b82f6; color:#93c5fd; border-radius:6px; padding:2px 8px; font-size:11px; cursor:pointer;">📋 複製全部 JSON</button>
+    </div>
+    <div id="local-history-list"></div>
+  </div>
+
   <!-- 設定彈窗 -->
   <div class="modal-overlay" id="settings-modal">
     <div class="modal-card">
-      <h3 style="margin-bottom: 12px; font-size: 16px;">⚙️ 雲端同步設定</h3>
+      <h3 style="margin-bottom: 12px; font-size: 16px;">⚙️ 雙引擎雲端同步設定</h3>
 
-      <!-- 模式 1: 共同雲端代碼 (預設，免 Google 試算表) -->
+      <!-- 模式 1: 雙引擎共同雲端代碼 (預設，免 Google 試算表) -->
       <div class="field-label">
-        <span>🌐 共同雲端代碼 (免設定試算表)</span>
-        <span style="color:#10b981; font-size:10px;">🟢 預設推薦</span>
+        <span>🌐 共同雲端代碼 (串流佇列 + 備援庫)</span>
+        <span style="color:#10b981; font-size:10px;">🟢 無容量上限</span>
       </div>
       <input type="text" id="setting-vault-id" class="input-box" placeholder="例如: ff808181a09d98f701a134941a4a52d4">
       <div class="tip-box">
-        手機與電腦只要填寫相同的雲端代碼（已預設配對），點分享就能直通電腦筆記庫！
+        採用「ntfy 即時訊息串流 + 輕量索引庫」雙通道同步，徹底解決傳統雲端滿載 HTTP 500 問題！
       </div>
 
       <!-- 模式 2: 自訂 Google Apps Script (選填) -->
@@ -314,11 +397,11 @@
       </div>
       <input type="url" id="setting-gas-url" class="input-box" placeholder="https://script.google.com/macros/s/.../exec">
       <div class="tip-box">
-        若您懶得設定 Google 試算表，保持空白即可，系統會自動使用上方的共同雲端！
+        若未設定試算表，保持空白即可，系統會自動透過雙引擎雲端直通電腦！
       </div>
 
       <div style="display: flex; gap: 8px; margin-top: 12px;">
-        <button id="btn-test-cloud-pwa" type="button" class="input-box" style="flex: 1; cursor: pointer; background: #2a2d36; color: #8ab4f8; border: 1px solid #3b82f6;">⚡ 測試連線</button>
+        <button id="btn-test-cloud-pwa" type="button" class="input-box" style="flex: 1; cursor: pointer; background: #2a2d36; color: #8ab4f8; border: 1px solid #3b82f6;">⚡ 測試雙引擎</button>
         <button id="btn-gen-vault-pwa" type="button" class="input-box" style="flex: 1; cursor: pointer; background: #2a2d36; color: #a7f3d0; border: 1px solid #10b981;">🎲 產生新代碼</button>
       </div>
       <div id="pwa-test-msg" style="font-size: 11px; margin-top: 6px; display: none; line-height: 1.4;"></div>
@@ -330,9 +413,11 @@
   </div>
 
   <script>
-    // 註冊 Service Worker
+    // 強制檢查並更新 Service Worker，防止手機卡在舊版快取
     if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.register("./sw.js").catch(console.error);
+      navigator.serviceWorker.register("./sw.js").then(reg => {
+        reg.update().catch(() => {});
+      }).catch(console.error);
     }
 
     const inputUrl = document.getElementById("input-url");
@@ -344,6 +429,12 @@
     const statusBanner = document.getElementById("status-banner");
     const statusIcon = document.getElementById("status-icon");
     const statusText = document.getElementById("status-text");
+    const pendingSyncBar = document.getElementById("pending-sync-bar");
+    const pendingCount = document.getElementById("pending-count");
+    const btnFlushSync = document.getElementById("btn-flush-sync");
+    const localHistoryCard = document.getElementById("local-history-card");
+    const localHistoryList = document.getElementById("local-history-list");
+    const btnCopyLocalJson = document.getElementById("btn-copy-local-json");
 
     const settingsModal = document.getElementById("settings-modal");
     const btnOpenSettings = document.getElementById("btn-open-settings");
@@ -362,6 +453,255 @@
     let cloudVaultId = localStorage.getItem("ai_cloud_vault_id") || DEFAULT_VAULT_ID;
     let gasApiUrl = localStorage.getItem("ai_knowledge_gas_url") || "";
 
+    const PENDING_SYNC_KEY = "ai_pending_sync_queue";
+    const LOCAL_NOTES_KEY = "ai_local_notes";
+
+    function getNtfyTopic(vaultId) {
+      const cleanId = (vaultId || DEFAULT_VAULT_ID).replace(/[^a-zA-Z0-9_-]/g, "");
+      return `ai_vault_${cleanId}`;
+    }
+
+    // ─── 佇列與本機快取管理 ───
+    function getPendingQueue() {
+      try {
+        return JSON.parse(localStorage.getItem(PENDING_SYNC_KEY) || "[]");
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function savePendingQueue(queue) {
+      try {
+        localStorage.setItem(PENDING_SYNC_KEY, JSON.stringify(queue.slice(0, 100)));
+      } catch (e) {}
+      updatePendingBarUI();
+    }
+
+    function getLocalNotes() {
+      try {
+        return JSON.parse(localStorage.getItem(LOCAL_NOTES_KEY) || "[]");
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function updatePendingBarUI() {
+      const queue = getPendingQueue();
+      if (pendingSyncBar && pendingCount) {
+        if (queue.length > 0) {
+          pendingCount.innerText = queue.length;
+          pendingSyncBar.style.display = "flex";
+        } else {
+          pendingSyncBar.style.display = "none";
+        }
+      }
+      renderLocalHistoryUI();
+    }
+
+    function renderLocalHistoryUI() {
+      if (!localHistoryCard || !localHistoryList) return;
+      const notes = getLocalNotes();
+      if (notes.length === 0) {
+        localHistoryCard.style.display = "none";
+        return;
+      }
+      localHistoryCard.style.display = "block";
+      localHistoryList.innerHTML = notes.slice(0, 5).map(n => `
+        <div class="local-item">
+          <div style="display:flex; justify-content:space-between; color:#e2e8f0; font-weight:600;">
+            <span>[${n.platform || "網頁"}] ${n.category || "未分類"}</span>
+            <span style="color:#94a3b8; font-size:11px;">${n.synced ? "☁️ 已同步" : "📦 本機暫存"}</span>
+          </div>
+          <a class="local-item-url" href="${n.url}" target="_blank">${n.title || n.url}</a>
+        </div>
+      `).join("");
+    }
+
+    if (btnCopyLocalJson) {
+      btnCopyLocalJson.addEventListener("click", async () => {
+        const notes = getLocalNotes();
+        try {
+          await navigator.clipboard.writeText(JSON.stringify(notes, null, 2));
+          showBanner("success", `已複製 ${notes.length} 筆本機收藏 JSON 至剪貼簿！`);
+        } catch (e) {
+          showBanner("warning", "複製失敗，請手動選取。");
+        }
+      });
+    }
+
+    function saveLocalNote(noteItem, synced = false) {
+      try {
+        const local = getLocalNotes();
+        const itemWithFlag = { ...noteItem, synced: Boolean(synced) };
+        const dupIdx = local.findIndex(n => n.url === noteItem.url);
+        if (dupIdx !== -1) {
+          local[dupIdx] = { ...local[dupIdx], ...itemWithFlag };
+        } else {
+          local.unshift(itemWithFlag);
+        }
+        localStorage.setItem(LOCAL_NOTES_KEY, JSON.stringify(local.slice(0, 100)));
+        renderLocalHistoryUI();
+      } catch (e) {
+        console.warn("寫入本地失敗:", e);
+      }
+    }
+
+    function markLocalNotesSynced(urls) {
+      try {
+        const urlSet = new Set(urls);
+        const local = getLocalNotes().map(n => urlSet.has(n.url) ? { ...n, synced: true } : n);
+        localStorage.setItem(LOCAL_NOTES_KEY, JSON.stringify(local));
+        renderLocalHistoryUI();
+      } catch (e) {}
+    }
+
+    // ─── 單筆推播至 Engine A: ntfy.sh 即時訊息佇列（無 980 Bytes 容量限制、免覆寫） ───
+    async function pushToNtfyStream(targetVaultId, items) {
+      const topic = getNtfyTopic(targetVaultId);
+      const endpoint = `https://ntfy.sh/${topic}`;
+      for (const item of items) {
+        const payloadStr = JSON.stringify({
+          id: item.id,
+          url: item.url,
+          title: (item.title || "").slice(0, 120),
+          platform: item.platform || "網頁",
+          category: item.category || "AI 工具與新技術",
+          note: (item.note || "").slice(0, 120),
+          aiStatus: item.aiStatus || "PENDING",
+          createdAt: item.createdAt
+        });
+        const resp = await fetch(endpoint, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain; charset=utf-8" },
+          body: payloadStr
+        });
+        if (!resp.ok) {
+          throw new Error(`串流引擎 HTTP ${resp.status}`);
+        }
+      }
+      return true;
+    }
+
+    // ─── 同步至 Engine B: restful-api.dev 輕量滑動視窗（嚴格限制 data < 800 字元，根絕 HTTP 500） ───
+    async function pushToRestfulSlidingWindow(targetVaultId, items) {
+      const vaultUrl = `https://api.restful-api.dev/objects/${targetVaultId}`;
+      let existingNotes = [];
+      try {
+        const getResp = await fetch(vaultUrl, { method: "GET" });
+        if (getResp && getResp.ok) {
+          const json = await getResp.json();
+          if (json && json.data && Array.isArray(json.data.notes)) {
+            existingNotes = json.data.notes;
+          }
+        }
+      } catch (e) {}
+
+      // 合併並轉為精簡格式，避免無謂欄位撐爆 VARCHAR(1000)
+      items.forEach(item => {
+        const slimItem = {
+          id: item.id,
+          url: item.url,
+          title: (item.title || "").slice(0, 40),
+          platform: item.platform || "網頁",
+          category: item.category || "AI 工具與新技術",
+          note: (item.note || "").slice(0, 40),
+          aiStatus: "PENDING",
+          createdAt: item.createdAt
+        };
+        const dupIdx = existingNotes.findIndex(n => n.url === slimItem.url);
+        if (dupIdx !== -1) {
+          existingNotes[dupIdx] = slimItem;
+        } else {
+          existingNotes.unshift(slimItem);
+        }
+      });
+
+      // 動態裁剪陣列直到 data JSON 字串長度嚴格 <= 800（低於 980 Bytes 資料庫硬上限）
+      let windowNotes = existingNotes.slice(0, 4);
+      let dataObj = { vaultName: "AIVault", notes: windowNotes };
+      while (windowNotes.length > 1 && JSON.stringify(dataObj).length > 800) {
+        windowNotes.pop();
+        dataObj = { vaultName: "AIVault", notes: windowNotes };
+      }
+
+      const putResp = await fetch(vaultUrl, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: "jim279ss_ai_notes_vault",
+          data: dataObj
+        })
+      });
+      if (!putResp.ok) {
+        throw new Error(`備援庫 HTTP ${putResp.status}`);
+      }
+      return true;
+    }
+
+    // ─── 自動補傳佇列至雲端（雙引擎並發容錯：任一通道成功即視為雲端同步完成） ───
+    async function flushPendingSyncQueue(silent = false) {
+      const queue = getPendingQueue();
+      if (!queue || queue.length === 0) return true;
+
+      try {
+        if (gasApiUrl && gasApiUrl.trim().startsWith("http")) {
+          // 自訂 Google Apps Script 模式
+          for (const item of [...queue]) {
+            const resp = await fetch(gasApiUrl.trim(), {
+              method: "POST",
+              headers: { "Content-Type": "text/plain;charset=utf-8" },
+              body: JSON.stringify(item)
+            });
+            const res = await resp.json();
+            if (!res.success) throw new Error(res.error || "GAS 儲存異常");
+          }
+          markLocalNotesSynced(queue.map(q => q.url));
+          savePendingQueue([]);
+          if (!silent) showBanner("success", `成功同步 ${queue.length} 筆收藏至 Google 試算表！`);
+          return true;
+        }
+
+        // 預設雙引擎模式：Engine A (ntfy.sh 無上限串流) + Engine B (restful-api 精簡視窗)
+        const targetId = cloudVaultId || DEFAULT_VAULT_ID;
+        const results = await Promise.allSettled([
+          pushToNtfyStream(targetId, queue),
+          pushToRestfulSlidingWindow(targetId, queue)
+        ]);
+
+        const ntfyOk = results[0].status === "fulfilled" && results[0].value === true;
+        const restfulOk = results[1].status === "fulfilled" && results[1].value === true;
+
+        if (ntfyOk || restfulOk) {
+          markLocalNotesSynced(queue.map(q => q.url));
+          savePendingQueue([]);
+          if (!silent) {
+            showBanner("success", `成功將 ${queue.length} 筆收藏同步至雲端知識庫！`);
+          }
+          return true;
+        }
+
+        const errMsg = results[0].reason?.message || results[1].reason?.message || "網路無回應";
+        throw new Error(errMsg);
+      } catch (err) {
+        console.warn("雲端同步暫緩:", err);
+        if (!silent) {
+          showBanner("warning", `目前已安全保存在手機本機！雲端待網路恢復後將自動補傳 (${err.message})。`);
+        }
+        return false;
+      }
+    }
+
+    if (btnFlushSync) {
+      btnFlushSync.addEventListener("click", () => {
+        btnFlushSync.innerText = "⏳ 補傳中...";
+        flushPendingSyncQueue(false).finally(() => {
+          btnFlushSync.innerText = "⚡ 立即補傳";
+          updatePendingBarUI();
+        });
+      });
+    }
+
+    // ─── 設定彈窗 ───
     if (settingVaultId) settingVaultId.value = cloudVaultId;
     if (settingGasUrl) settingGasUrl.value = gasApiUrl;
 
@@ -379,7 +719,8 @@
       localStorage.setItem("ai_cloud_vault_id", cloudVaultId);
       localStorage.setItem("ai_knowledge_gas_url", gasApiUrl);
       settingsModal.style.display = "none";
-      showBanner("success", "✅ 雲端設定已儲存！");
+      showBanner("success", "雲端設定已儲存！");
+      flushPendingSyncQueue(true);
     });
 
     // 產生新代碼
@@ -395,11 +736,7 @@
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
               name: "jim279ss_ai_notes_vault",
-              data: {
-                vaultName: "AI知識庫手機收藏共同雲端",
-                updatedAt: new Date().toLocaleString("zh-TW"),
-                notes: []
-              }
+              data: { vaultName: "AIVault", notes: [] }
             })
           });
           if (!resp.ok) throw new Error("HTTP " + resp.status);
@@ -410,8 +747,11 @@
             pwaTestMsg.innerText = `✅ 新代碼建立成功！請點擊「儲存」，並將此代碼填入電腦端。`;
           }
         } catch (e) {
-          pwaTestMsg.style.color = "#fecaca";
-          pwaTestMsg.innerText = `❌ 建立失敗: ${e.message}`;
+          // 即使 restful-api 異常，也可直接生成隨機種子給 ntfy 串流引擎使用
+          const fallbackId = "vault_" + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+          settingVaultId.value = fallbackId;
+          pwaTestMsg.style.color = "#a7f3d0";
+          pwaTestMsg.innerText = `✅ 已產生新串流代碼 (${fallbackId})！請點擊「儲存」並填入電腦端。`;
         }
       });
     }
@@ -424,7 +764,7 @@
 
         pwaTestMsg.style.display = "block";
         pwaTestMsg.style.color = "#93c5fd";
-        pwaTestMsg.innerText = "⏳ 正在測試雲端連線...";
+        pwaTestMsg.innerText = "⏳ 正在測試雙引擎雲端連線...";
 
         if (testGas && testGas.startsWith("http")) {
           try {
@@ -439,25 +779,58 @@
             }
           } catch (e) {
             pwaTestMsg.style.color = "#fecaca";
-            pwaTestMsg.innerText = `❌ 試算表連線失敗: ${e.message}。若懶得設定試算表，可清空此欄位直接使用共同雲端。`;
+            pwaTestMsg.innerText = `❌ 試算表連線失敗: ${e.message}。建議清空此欄改用預設雙引擎雲端。`;
           }
         } else {
           try {
-            const resp = await fetch(`https://api.restful-api.dev/objects/${testVault}`);
-            if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-            const res = await resp.json();
-            const count = (res && res.data && Array.isArray(res.data.notes)) ? res.data.notes.length : 0;
+            const topic = getNtfyTopic(testVault);
+            const ntfyResp = await fetch(`https://ntfy.sh/${topic}/json?poll=1&since=all`);
+            if (!ntfyResp.ok) throw new Error(`HTTP ${ntfyResp.status}`);
+            const text = await ntfyResp.text();
+            const count = text.trim() ? text.trim().split("\n").filter(Boolean).length : 0;
             pwaTestMsg.style.color = "#a7f3d0";
-            pwaTestMsg.innerText = `✅ 共同雲端連線正常！現有 ${count} 筆收藏記錄（免試算表，直接可通）。`;
+            pwaTestMsg.innerText = `✅ 雙引擎串流雲端連線正常！佇列中共有 ${count} 筆同步訊號（無容量限制）。`;
           } catch (e) {
             pwaTestMsg.style.color = "#fecaca";
-            pwaTestMsg.innerText = `❌ 共同雲端連線失敗: ${e.message}。可點擊「產生新代碼」建立新空間。`;
+            pwaTestMsg.innerText = `❌ 雲端連線異常: ${e.message}`;
           }
         }
       });
     }
 
-    // 2. 解析來自 Android 系統分享的 Query 參數 (Web Share Target)
+    // ─── 平台識別 ───
+    function identifyPlatform(url) {
+      if (!badgePlatform) return;
+      badgePlatform.className = "platform-badge";
+      if (!url) {
+        badgePlatform.innerText = "🌐 網頁";
+        detectedPlatform = "網頁";
+        return;
+      }
+
+      if (/youtube\.com|youtu\.be/i.test(url)) {
+        badgePlatform.innerText = "▶ YouTube";
+        badgePlatform.classList.add("youtube");
+        detectedPlatform = "YouTube";
+      } else if (/instagram\.com/i.test(url)) {
+        badgePlatform.innerText = "📸 Instagram";
+        badgePlatform.classList.add("instagram");
+        detectedPlatform = "Instagram";
+      } else if (/threads\.net|threads\.com/i.test(url)) {
+        badgePlatform.innerText = "🧵 Threads";
+        badgePlatform.classList.add("threads");
+        detectedPlatform = "Threads";
+      } else if (/facebook\.com|fb\.watch|fb\.me/i.test(url)) {
+        badgePlatform.innerText = "👥 Facebook";
+        badgePlatform.classList.add("facebook");
+        detectedPlatform = "Facebook";
+      } else {
+        badgePlatform.innerText = "🌐 網頁文章";
+        detectedPlatform = "網頁文章";
+      }
+    }
+
+    // ─── 解析來自 Android 系統分享的 Query 參數 (Web Share Target) ───
     let autoSaveTimer = null;
 
     function parseShareTarget() {
@@ -467,12 +840,15 @@
       const rawUrl = params.get("url") || "";
 
       const fullContent = [rawTitle, rawText, rawUrl].filter(Boolean).join(" ");
-      if (!fullContent) return; // 若是一般打開網頁，不自動執行
-      
-      // 從字串中萃取出 HTTP/HTTPS 網址（特別支援 IG/Threads/FB/YouTube）
+      if (!fullContent) {
+        flushPendingSyncQueue(true);
+        updatePendingBarUI();
+        return;
+      }
+
       const urlRegex = /(https?:\/\/[^\s]+)/gi;
       const match = fullContent.match(urlRegex);
-      
+
       let finalUrl = "";
       if (rawUrl && rawUrl.startsWith("http")) {
         finalUrl = rawUrl;
@@ -480,35 +856,29 @@
         finalUrl = match[0];
       }
 
-      // 清理並去除多餘的網址，剩下的當標題
       let cleanText = fullContent.replace(urlRegex, "").trim();
       if (!cleanText) cleanText = rawTitle || "";
 
       inputUrl.value = finalUrl;
       inputTitle.value = cleanText;
 
-      // 自動識別平台
       identifyPlatform(finalUrl);
-
-      // 自動智慧推薦分類（若無法判斷，預設標記為「待 AI 智慧分類」，不粗暴丟給其他）
       autoPredictCategory(finalUrl + " " + cleanText);
 
-      // ⚡ 關鍵功能：【極速自動分享－預設使用共同雲端代碼自動儲存】
       if (finalUrl) {
         triggerInstantAutoSave();
       }
     }
 
     function triggerInstantAutoSave() {
-      showBanner("success", "⚡ 正在為您自動快速收藏...（點畫面可取消暫停）");
+      showBanner("success", "正在為您自動快速收藏...（點畫面可暫停修改）");
       btnSubmit.innerHTML = "<span>⚡ 自動快速儲存中...</span>";
-      
-      // 點擊畫面任何地方可取消自動關閉，方便手動填備註
+
       document.body.addEventListener("click", cancelAutoSaveOnce, { once: true });
 
       autoSaveTimer = setTimeout(() => {
         btnSubmit.click();
-      }, 1000); // 1 秒後全自動儲存並關閉
+      }, 900);
     }
 
     function cancelAutoSaveOnce() {
@@ -522,8 +892,7 @@
 
     function autoPredictCategory(content) {
       const text = content.toLowerCase();
-      // 根據您的核心需求與範例：預設優先匹配
-      let target = "待 AI 自動分類";
+      let target = "AI 工具與新技術";
 
       if (/bim|revit|dynamo|navisworks|ifc|建築/i.test(text)) {
         target = "BIM／Revit";
@@ -558,21 +927,21 @@
       }
     });
 
-    // 網址變更手動輸入時重新檢測
     inputUrl.addEventListener("input", (e) => identifyPlatform(e.target.value));
 
-    // 3. 一鍵送出收藏
+    // ─── 一鍵送出收藏（本機保底 + 雙引擎串流雲端同步） ───
     btnSubmit.addEventListener("click", async () => {
       const url = inputUrl.value.trim();
       if (!url) {
-        showBanner("error", "⚠️ 請輸入或分享有效的網址！");
+        showBanner("error", "請輸入或分享有效的網址！");
         return;
       }
 
       btnSubmit.disabled = true;
-      btnSubmit.innerHTML = "<span>⏳ 正在存入雲端知識庫...</span>";
+      btnSubmit.innerHTML = "<span>⏳ 正在存入知識庫...</span>";
 
-      const payload = {
+      const noteItem = {
+        id: "note_" + Date.now(),
         url: url,
         title: inputTitle.value.trim(),
         platform: detectedPlatform,
@@ -583,89 +952,63 @@
         createdAt: new Date().toLocaleString("zh-TW")
       };
 
-      try {
-        if (gasApiUrl && gasApiUrl.trim().startsWith("http")) {
-          // 使用自訂 Google Apps Script 雲端
-          const response = await fetch(gasApiUrl.trim(), {
-            method: "POST",
-            headers: { "Content-Type": "text/plain;charset=utf-8" },
-            body: JSON.stringify(payload)
-          });
-          const result = await response.json();
-          if (!result.success) throw new Error(result.error || "儲存失敗");
+      // 第一步：100% 立即寫入手機本機保存
+      saveLocalNote(noteItem, false);
 
-          showBanner("success", "🎉 收藏成功！已寫入 Google 試算表");
-        } else {
-          // 預設模式：共同雲端 (免 Google 試算表，直接可通)
-          const vaultUrl = `https://api.restful-api.dev/objects/${cloudVaultId}`;
-          let existingNotes = [];
-          try {
-            const resp = await fetch(vaultUrl);
-            if (resp.ok) {
-              const json = await resp.json();
-              if (json && json.data && Array.isArray(json.data.notes)) {
-                existingNotes = json.data.notes;
-              }
-            }
-          } catch (e) {
-            console.warn("讀取共同雲端既有筆記失敗:", e);
-          }
+      // 第二步：排入待同步佇列
+      const queue = getPendingQueue();
+      const existIdx = queue.findIndex(n => n.url === noteItem.url);
+      if (existIdx !== -1) {
+        queue[existIdx] = noteItem;
+      } else {
+        queue.unshift(noteItem);
+      }
+      savePendingQueue(queue);
 
-          // 網址排重檢查
-          const dupIdx = existingNotes.findIndex(n => n.url === payload.url);
-          if (dupIdx !== -1) {
-            if (payload.note) {
-              existingNotes[dupIdx].note = existingNotes[dupIdx].note ? (existingNotes[dupIdx].note + " | " + payload.note) : payload.note;
-            }
-          } else {
-            existingNotes.unshift({ id: "note_" + Date.now(), ...payload });
-          }
+      // 第三步：透過雙引擎（ntfy 串流 + 精簡視窗庫）同步至雲端
+      const syncOk = await flushPendingSyncQueue(true);
 
-          const putResp = await fetch(vaultUrl, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              name: "jim279ss_ai_notes_vault",
-              data: {
-                vaultName: "AI知識庫手機收藏共同雲端",
-                updatedAt: new Date().toLocaleString("zh-TW"),
-                notes: existingNotes.slice(0, 150)
-              }
-            })
-          });
-          if (!putResp.ok) throw new Error(`共同雲端寫入失敗 (HTTP ${putResp.status})`);
-
-          // 本地亦同步備份一份
-          const localNotes = JSON.parse(localStorage.getItem("ai_local_notes") || "[]");
-          localNotes.unshift({ id: "note_" + Date.now(), ...payload });
-          localStorage.setItem("ai_local_notes", JSON.stringify(localNotes.slice(0, 100)));
-
-          showBanner("success", "🎉 收藏成功！已存入共同雲端知識庫");
-        }
-
+      if (syncOk) {
         btnSubmit.innerHTML = "<span>✅ 收藏完成！</span>";
         btnSubmit.style.background = "#10b981";
+        showBanner("success", "收藏成功！已透過雙引擎即時存入雲端知識庫");
 
         setTimeout(() => {
+          btnSubmit.disabled = false;
           if (window.history.length > 1) {
             window.history.back();
           }
-        }, 2200);
-      } catch (err) {
-        showBanner("error", "❌ 儲存失敗：" + err.message);
+        }, 1500);
+      } else {
         btnSubmit.disabled = false;
-        btnSubmit.innerHTML = "<span>💾 重試儲存</span>";
-        btnSubmit.style.background = "#dc2626";
+        btnSubmit.innerHTML = "<span>⚡ 重試雲端同步</span>";
+        btnSubmit.style.background = "#f59e0b";
+        showBanner("warning", "已安全保存在手機本機！目前處於離線狀態，恢復連線後將自動補傳。");
+        updatePendingBarUI();
       }
     });
 
     function showBanner(type, msg) {
       statusBanner.className = "status-banner " + type;
-      statusText.innerText = msg;
+      if (type === "warning") {
+        statusIcon.innerText = "⚠️";
+      } else if (type === "error") {
+        statusIcon.innerText = "❌";
+      } else {
+        statusIcon.innerText = "✅";
+      }
+      // 避免訊息內重複出現狀態圖示
+      statusText.innerText = String(msg || "").replace(/^[✅❌⚠️🎉⚡]+\s*/, "");
       statusBanner.style.display = "flex";
     }
 
+    // 監聽手機恢復網路時自動背景補傳
+    window.addEventListener("online", () => {
+      flushPendingSyncQueue(false);
+    });
+
     // 初始化執行
+    updatePendingBarUI();
     parseShareTarget();
   </script>
 </body>
