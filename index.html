@@ -450,8 +450,9 @@
     let detectedPlatform = "網頁";
 
     const DEFAULT_VAULT_ID = "ff808181a09d98f701a134941a4a52d4";
+    const DEFAULT_GAS_URL = "https://script.google.com/macros/s/AKfycbzZiI8iSQrqlDJ24VfmC6sT8QKx3UT11filrHe0PHBluNNw6sb26JWAuY1QMBY3Hzd3wg/exec";
     let cloudVaultId = localStorage.getItem("ai_cloud_vault_id") || DEFAULT_VAULT_ID;
-    let gasApiUrl = localStorage.getItem("ai_knowledge_gas_url") || "";
+    let gasApiUrl = localStorage.getItem("ai_knowledge_gas_url") || DEFAULT_GAS_URL;
 
     const PENDING_SYNC_KEY = "ai_pending_sync_queue";
     const LOCAL_NOTES_KEY = "ai_local_notes";
@@ -555,7 +556,25 @@
       } catch (e) {}
     }
 
-    // ─── 單筆推播至 Engine A: ntfy.sh 即時訊息佇列（無 980 Bytes 容量限制、免覆寫） ───
+    // ─── Engine 0: Google 雲端試算表 (GAS) ───
+    async function pushToGasSheet(targetGasUrl, items) {
+      if (!targetGasUrl || !targetGasUrl.trim().startsWith("http")) {
+        throw new Error("未設定 GAS 網址");
+      }
+      for (const item of items) {
+        const resp = await fetch(targetGasUrl.trim(), {
+          method: "POST",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify(item)
+        });
+        if (!resp.ok) throw new Error(`GAS HTTP ${resp.status}`);
+        const res = await resp.json();
+        if (!res.success) throw new Error(res.error || "GAS 儲存異常");
+      }
+      return true;
+    }
+
+    // ─── Engine A: ntfy.sh 即時訊息佇列（無 980 Bytes 容量限制、免覆寫） ───
     async function pushToNtfyStream(targetVaultId, items) {
       const topic = getNtfyTopic(targetVaultId);
       const endpoint = `https://ntfy.sh/${topic}`;
@@ -582,7 +601,7 @@
       return true;
     }
 
-    // ─── 同步至 Engine B: restful-api.dev 輕量滑動視窗（嚴格限制 data < 800 字元，根絕 HTTP 500） ───
+    // ─── Engine B: restful-api.dev 輕量滑動視窗（嚴格限制 data < 800 字元，根絕 HTTP 500） ───
     async function pushToRestfulSlidingWindow(targetVaultId, items) {
       const vaultUrl = `https://api.restful-api.dev/objects/${targetVaultId}`;
       let existingNotes = [];
@@ -596,7 +615,6 @@
         }
       } catch (e) {}
 
-      // 合併並轉為精簡格式，避免無謂欄位撐爆 VARCHAR(1000)
       items.forEach(item => {
         const slimItem = {
           id: item.id,
@@ -616,7 +634,6 @@
         }
       });
 
-      // 動態裁剪陣列直到 data JSON 字串長度嚴格 <= 800（低於 980 Bytes 資料庫硬上限）
       let windowNotes = existingNotes.slice(0, 4);
       let dataObj = { vaultName: "AIVault", notes: windowNotes };
       while (windowNotes.length > 1 && JSON.stringify(dataObj).length > 800) {
@@ -638,44 +655,31 @@
       return true;
     }
 
-    // ─── 自動補傳佇列至雲端（雙引擎並發容錯：任一通道成功即視為雲端同步完成） ───
+    // ─── 自動補傳佇列至雲端（三引擎並發容錯：Google 試算表 + ntfy 串流 + 精簡視窗） ───
     async function flushPendingSyncQueue(silent = false) {
       const queue = getPendingQueue();
       if (!queue || queue.length === 0) return true;
 
       try {
-        if (gasApiUrl && gasApiUrl.trim().startsWith("http")) {
-          // 自訂 Google Apps Script 模式
-          for (const item of [...queue]) {
-            const resp = await fetch(gasApiUrl.trim(), {
-              method: "POST",
-              headers: { "Content-Type": "text/plain;charset=utf-8" },
-              body: JSON.stringify(item)
-            });
-            const res = await resp.json();
-            if (!res.success) throw new Error(res.error || "GAS 儲存異常");
-          }
-          markLocalNotesSynced(queue.map(q => q.url));
-          savePendingQueue([]);
-          if (!silent) showBanner("success", `成功同步 ${queue.length} 筆收藏至 Google 試算表！`);
-          return true;
-        }
-
-        // 預設雙引擎模式：Engine A (ntfy.sh 無上限串流) + Engine B (restful-api 精簡視窗)
         const targetId = cloudVaultId || DEFAULT_VAULT_ID;
+        const targetGas = gasApiUrl || DEFAULT_GAS_URL;
+
         const results = await Promise.allSettled([
+          pushToGasSheet(targetGas, queue),
           pushToNtfyStream(targetId, queue),
           pushToRestfulSlidingWindow(targetId, queue)
         ]);
 
-        const ntfyOk = results[0].status === "fulfilled" && results[0].value === true;
-        const restfulOk = results[1].status === "fulfilled" && results[1].value === true;
+        const gasOk = results[0].status === "fulfilled" && results[0].value === true;
+        const ntfyOk = results[1].status === "fulfilled" && results[1].value === true;
+        const restfulOk = results[2].status === "fulfilled" && results[2].value === true;
 
-        if (ntfyOk || restfulOk) {
+        if (gasOk || ntfyOk || restfulOk) {
           markLocalNotesSynced(queue.map(q => q.url));
           savePendingQueue([]);
           if (!silent) {
-            showBanner("success", `成功將 ${queue.length} 筆收藏同步至雲端知識庫！`);
+            const channelName = gasOk ? "Google 雲端試算表" : "雙引擎雲端知識庫";
+            showBanner("success", `成功將 ${queue.length} 筆收藏同步至${channelName}！`);
           }
           return true;
         }

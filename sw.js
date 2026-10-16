@@ -1,5 +1,5 @@
-// AI 知識庫 PWA Service Worker (v5 - Network First 防卡舊版快取)
-const CACHE_NAME = "ai-collector-v5";
+// AI 知識庫 PWA Service Worker (v6 - Google 雲端試算表 + 雙引擎串流)
+const CACHE_NAME = "ai-collector-v6";
 const ASSETS = [
   "./",
   "./index.html",
