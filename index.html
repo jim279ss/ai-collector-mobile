@@ -770,34 +770,35 @@
         pwaTestMsg.style.color = "#93c5fd";
         pwaTestMsg.innerText = "⏳ 正在測試雙引擎雲端連線...";
 
-        if (testGas && testGas.startsWith("http")) {
-          try {
-            const resp = await fetch(testGas, { method: "GET" });
-            if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-            const res = await resp.json();
-            if (res && res.success) {
-              pwaTestMsg.style.color = "#a7f3d0";
-              pwaTestMsg.innerText = `✅ Google 試算表連線成功！現有 ${res.notes ? res.notes.length : 0} 筆記錄。`;
-            } else {
-              throw new Error(res.error || "回傳異常");
-            }
-          } catch (e) {
-            pwaTestMsg.style.color = "#fecaca";
-            pwaTestMsg.innerText = `❌ 試算表連線失敗: ${e.message}。建議清空此欄改用預設雙引擎雲端。`;
-          }
-        } else {
-          try {
-            const topic = getNtfyTopic(testVault);
-            const ntfyResp = await fetch(`https://ntfy.sh/${topic}/json?poll=1&since=all`);
-            if (!ntfyResp.ok) throw new Error(`HTTP ${ntfyResp.status}`);
-            const text = await ntfyResp.text();
-            const count = text.trim() ? text.trim().split("\n").filter(Boolean).length : 0;
+        try {
+          const topic = getNtfyTopic(testVault);
+          const [ntfyRes, gasRes] = await Promise.allSettled([
+            fetch(`https://ntfy.sh/${topic}/json?poll=1&since=all`).then(r => r.ok ? r.text() : Promise.reject(new Error(`HTTP ${r.status}`))),
+            (testGas && testGas.startsWith("http"))
+              ? fetch(testGas, { method: "GET" }).then(r => r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`)))
+              : Promise.reject(new Error("未設定"))
+          ]);
+
+          const ntfyOk = ntfyRes.status === "fulfilled";
+          const gasOk = gasRes.status === "fulfilled" && gasRes.value?.success;
+
+          if (gasOk && ntfyOk) {
+            const gCount = gasRes.value.notes ? gasRes.value.notes.length : 0;
             pwaTestMsg.style.color = "#a7f3d0";
-            pwaTestMsg.innerText = `✅ 雙引擎串流雲端連線正常！佇列中共有 ${count} 筆同步訊號（無容量限制）。`;
-          } catch (e) {
-            pwaTestMsg.style.color = "#fecaca";
-            pwaTestMsg.innerText = `❌ 雲端連線異常: ${e.message}`;
+            pwaTestMsg.innerText = `✅ Google 試算表 (${gCount} 筆) 與雙引擎串流皆連線正常！`;
+          } else if (ntfyOk) {
+            const count = ntfyRes.value.trim() ? ntfyRes.value.trim().split("\n").filter(Boolean).length : 0;
+            pwaTestMsg.style.color = "#a7f3d0";
+            pwaTestMsg.innerText = `✅ 雙引擎串流雲端連線正常！現有 ${count} 筆同步訊號（無容量限制，隨時可存）。`;
+          } else if (gasOk) {
+            pwaTestMsg.style.color = "#a7f3d0";
+            pwaTestMsg.innerText = `✅ Google 試算表連線成功！`;
+          } else {
+            throw new Error("請檢查網路連線");
           }
+        } catch (e) {
+          pwaTestMsg.style.color = "#fecaca";
+          pwaTestMsg.innerText = `❌ 雲端連線異常: ${e.message}`;
         }
       });
     }
