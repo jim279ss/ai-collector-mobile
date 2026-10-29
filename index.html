@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>AI 知識庫 - 手機收藏助手</title>
+  <title>AI 知識庫 - 手機收藏助手 (防漏加固版)</title>
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#121316">
   <link rel="apple-touch-icon" href="icon-192.png">
@@ -18,6 +18,7 @@
       --accent-hover: #2563eb;
       --success: #10b981;
       --warning: #f59e0b;
+      --danger: #ef4444;
       --border: #33363f;
     }
 
@@ -37,13 +38,14 @@
       display: flex;
       flex-direction: column;
       justify-content: flex-start;
+      padding-bottom: 40px;
     }
 
     .header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
       padding-bottom: 12px;
       border-bottom: 1px solid var(--border);
     }
@@ -66,11 +68,12 @@
 
     .version-tag {
       font-size: 10px;
-      background: #1e3a8a;
-      color: #93c5fd;
-      padding: 2px 6px;
+      background: #065f46;
+      color: #a7f3d0;
+      padding: 2px 7px;
       border-radius: 6px;
-      font-weight: 600;
+      font-weight: 700;
+      border: 1px solid #059669;
     }
 
     .btn-settings {
@@ -85,10 +88,10 @@
     .card {
       background: var(--bg-card);
       border-radius: 14px;
-      padding: 16px;
+      padding: 15px;
       border: 1px solid var(--border);
-      margin-bottom: 14px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      margin-bottom: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
     }
 
     .field-label {
@@ -168,7 +171,7 @@
       border: none;
       padding: 14px;
       border-radius: 12px;
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 700;
       cursor: pointer;
       display: flex;
@@ -189,12 +192,38 @@
       box-shadow: none;
     }
 
+    /* 自動倒數條 */
+    .countdown-bar-container {
+      display: none;
+      background: #1e293b;
+      border: 1px solid #3b82f6;
+      border-radius: 10px;
+      padding: 10px 14px;
+      margin-bottom: 12px;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .countdown-text {
+      font-size: 13px;
+      color: #93c5fd;
+      font-weight: 600;
+    }
+    .btn-cancel-countdown {
+      background: #475569;
+      border: none;
+      color: #fff;
+      padding: 5px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
     .status-banner {
       display: none;
-      padding: 12px;
+      padding: 12px 14px;
       border-radius: 10px;
       font-size: 13px;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
       align-items: center;
       gap: 8px;
       line-height: 1.4;
@@ -218,20 +247,43 @@
       display: flex;
     }
 
+    /* 成果完成卡片（防急躁跳離） */
+    .post-save-actions {
+      display: none;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .btn-action-sec {
+      flex: 1;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: #2a2d36;
+      color: #e2e8f0;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+    }
+    .btn-action-sec.highlight {
+      border-color: #10b981;
+      color: #a7f3d0;
+    }
+
     .pending-sync-bar {
       display: none;
       align-items: center;
       justify-content: space-between;
-      background: #1e293b;
-      border: 1px solid #3b82f6;
+      background: #272115;
+      border: 1px solid #d97706;
       border-radius: 10px;
       padding: 10px 14px;
       margin-top: 12px;
       font-size: 13px;
-      color: #93c5fd;
+      color: #fef3c7;
     }
     .btn-flush {
-      background: #3b82f6;
+      background: #d97706;
       color: #fff;
       border: none;
       padding: 5px 12px;
@@ -241,32 +293,97 @@
       cursor: pointer;
     }
 
+    /* 歷史清單與防漏數據庫面板 */
     .local-history-card {
-      margin-top: 16px;
-      padding: 12px 14px;
-      background: rgba(30, 31, 36, 0.75);
+      margin-top: 18px;
+      padding: 14px;
+      background: rgba(30, 31, 36, 0.85);
       border: 1px solid var(--border);
-      border-radius: 12px;
+      border-radius: 14px;
+    }
+    .history-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .history-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #cbd5e1;
+    }
+    .history-tools {
+      display: flex;
+      gap: 6px;
+    }
+    .btn-tool {
+      background: #282a30;
+      border: 1px solid #475569;
+      color: #94a3b8;
+      border-radius: 6px;
+      padding: 3px 8px;
+      font-size: 11px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .btn-tool:hover {
+      color: #fff;
+      border-color: var(--accent);
     }
     .local-item {
-      padding: 8px 0;
+      padding: 10px 0;
       border-bottom: 1px solid rgba(255, 255, 255, 0.06);
       font-size: 12px;
       display: flex;
       flex-direction: column;
-      gap: 3px;
+      gap: 4px;
     }
     .local-item:last-child {
       border-bottom: none;
     }
+    .local-item-title {
+      font-weight: 600;
+      color: #e2e8f0;
+      line-height: 1.35;
+      word-break: break-all;
+    }
     .local-item-url {
-      color: #93c5fd;
+      color: #60a5fa;
       text-decoration: none;
       word-break: break-all;
+      font-size: 11px;
       display: -webkit-box;
       -webkit-line-clamp: 1;
       -webkit-box-orient: vertical;
       overflow: hidden;
+    }
+    .local-item-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 10.5px;
+      color: #94a3b8;
+      margin-top: 2px;
+    }
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-size: 10px;
+    }
+    .status-badge.synced {
+      background: rgba(16, 185, 129, 0.15);
+      color: #6ee7b7;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+    .status-badge.pending {
+      background: rgba(245, 158, 11, 0.15);
+      color: #fcd34d;
+      border: 1px solid rgba(245, 158, 11, 0.3);
     }
 
     /* 設定彈窗 */
@@ -277,7 +394,7 @@
       left: 0;
       right: 0;
       bottom: 0;
-      background: rgba(0, 0, 0, 0.7);
+      background: rgba(0, 0, 0, 0.75);
       backdrop-filter: blur(4px);
       z-index: 100;
       align-items: center;
@@ -291,13 +408,15 @@
       width: 100%;
       max-width: 360px;
       border: 1px solid var(--border);
+      max-height: 90vh;
+      overflow-y: auto;
     }
 
     .tip-box {
       font-size: 12px;
       color: var(--text-secondary);
       line-height: 1.5;
-      margin-top: 8px;
+      margin-top: 6px;
     }
   </style>
 </head>
@@ -307,11 +426,21 @@
   <header class="header">
     <div class="logo-group">
       <span class="logo-icon">⚡</span>
-      <span class="title">AI 知識庫收藏</span>
-      <span class="version-tag">雙引擎 v5.0</span>
+      <div>
+        <div style="display:flex; align-items:center; gap:6px;">
+          <span class="title">AI 知識庫</span>
+          <span class="version-tag">🛡️ 無上限全量防漏 v8.0</span>
+        </div>
+      </div>
     </div>
-    <button class="btn-settings" id="btn-open-settings" title="設定雲端網址">⚙️</button>
+    <button class="btn-settings" id="btn-open-settings" title="設定雲端中樞">⚙️</button>
   </header>
+
+  <!-- 自動倒數條 (提供明確倒數與手動暫停) -->
+  <div class="countdown-bar-container" id="countdown-bar">
+    <span class="countdown-text" id="countdown-text">⚡ 正在為您快速預備收藏 (3s)...</span>
+    <button type="button" class="btn-cancel-countdown" id="btn-pause-countdown">暫停修改</button>
+  </div>
 
   <!-- 狀態提示列 -->
   <div class="status-banner" id="status-banner">
@@ -322,7 +451,7 @@
   <!-- 主卡片：分享內容解析 -->
   <div class="card">
     <div class="field-label">
-      <span>來源平台與網址</span>
+      <span>來源平台與網址 (已自動清理無效後綴)</span>
       <span class="platform-badge" id="badge-platform">🌐 網頁</span>
     </div>
     <input type="url" id="input-url" class="input-box" placeholder="https://..." style="margin-bottom: 12px;">
@@ -358,20 +487,31 @@
 
   <!-- 送出按鈕 -->
   <button class="btn-submit" id="btn-submit">
-    <span>💾 一鍵收藏至 AI 知識庫</span>
+    <span>💾 一鍵收藏至 AI 知識庫 (100% 本機保底)</span>
   </button>
 
-  <!-- 本地待同步佇列欄位 -->
+  <!-- 收藏完成後的友善操作區 (避免早退中斷網路請求) -->
+  <div class="post-save-actions" id="post-save-actions">
+    <button type="button" class="btn-action-sec" id="btn-new-collect">➕ 繼續存下一筆</button>
+    <button type="button" class="btn-action-sec highlight" id="btn-done-close">✓ 完成並關閉</button>
+  </div>
+
+  <!-- 本地待補傳佇列欄位 -->
   <div class="pending-sync-bar" id="pending-sync-bar">
-    <span>📦 本機有 <b id="pending-count" style="color: #60a5fa;">0</b> 筆待補傳收藏</span>
+    <span>📦 離線防漏：本機有 <b id="pending-count" style="color: #fbbf24;">0</b> 筆待補傳雲端</span>
     <button type="button" class="btn-flush" id="btn-flush-sync">⚡ 立即補傳</button>
   </div>
 
-  <!-- 手機本機最近收藏列表（保底可見，隨時可查） -->
-  <div class="local-history-card" id="local-history-card" style="display: none;">
-    <div class="field-label" style="margin-bottom: 8px;">
-      <span>📱 手機本機已存紀錄（最近 5 筆）</span>
-      <button type="button" id="btn-copy-local-json" style="background:none; border:1px solid #3b82f6; color:#93c5fd; border-radius:6px; padding:2px 8px; font-size:11px; cursor:pointer;">📋 複製全部 JSON</button>
+  <!-- 手機本機已存防漏總庫 (使用者隨時可查、絕不漏失) -->
+  <div class="local-history-card" id="local-history-card">
+    <div class="history-header">
+      <span class="history-title" id="history-summary-title">📱 手機本機保底清單 (0 筆)</span>
+      <div class="history-tools">
+        <button type="button" class="btn-tool" id="btn-sync-all-cloud" title="將手機本機所有歷史紀錄全量重新推播至雲端與電腦" style="color:#6ee7b7; border-color:#059669;">☁️ 全量重推雲端</button>
+        <button type="button" class="btn-tool" id="btn-toggle-all">展開全部</button>
+        <button type="button" class="btn-tool" id="btn-copy-local-json" title="匯出完整備份 JSON">📋 備份</button>
+        <button type="button" class="btn-tool" id="btn-copy-markdown" title="複製 Markdown 清單">📑 MD</button>
+      </div>
     </div>
     <div id="local-history-list"></div>
   </div>
@@ -379,7 +519,7 @@
   <!-- 設定彈窗 -->
   <div class="modal-overlay" id="settings-modal">
     <div class="modal-card">
-      <h3 style="margin-bottom: 12px; font-size: 16px;">⚙️ 雙引擎雲端同步設定</h3>
+      <h3 style="margin-bottom: 12px; font-size: 16px;">⚙️ 雙引擎雲端中樞設定</h3>
 
       <!-- 模式 1: 雙引擎共同雲端代碼 (預設，免 Google 試算表) -->
       <div class="field-label">
@@ -388,24 +528,24 @@
       </div>
       <input type="text" id="setting-vault-id" class="input-box" placeholder="例如: ff808181a09d98f701a134941a4a52d4">
       <div class="tip-box">
-        採用「ntfy 即時訊息串流 + 輕量索引庫」雙通道同步，徹底解決傳統雲端滿載 HTTP 500 問題！
+        採用「ntfy 即時訊息串流 + 輕量索引庫」雙通道同步，手機與電腦雙向直通！
       </div>
 
       <!-- 模式 2: 自訂 Google Apps Script (選填) -->
       <div class="field-label" style="margin-top: 12px;">
-        <span>📊 Google Apps Script 網址 (選填)</span>
+        <span>📊 Google Apps Script 網址 (試算表同步)</span>
       </div>
       <input type="url" id="setting-gas-url" class="input-box" placeholder="https://script.google.com/macros/s/.../exec">
       <div class="tip-box">
-        若未設定試算表，保持空白即可，系統會自動透過雙引擎雲端直通電腦！
+        若已部署 Google 試算表，請填入網址，收藏將永久留存於 Google 雲端硬碟。
       </div>
 
-      <div style="display: flex; gap: 8px; margin-top: 12px;">
-        <button id="btn-test-cloud-pwa" type="button" class="input-box" style="flex: 1; cursor: pointer; background: #2a2d36; color: #8ab4f8; border: 1px solid #3b82f6;">⚡ 測試雙引擎</button>
+      <div style="display: flex; gap: 8px; margin-top: 14px;">
+        <button id="btn-test-cloud-pwa" type="button" class="input-box" style="flex: 1; cursor: pointer; background: #2a2d36; color: #8ab4f8; border: 1px solid #3b82f6;">⚡ 測試連線</button>
         <button id="btn-gen-vault-pwa" type="button" class="input-box" style="flex: 1; cursor: pointer; background: #2a2d36; color: #a7f3d0; border: 1px solid #10b981;">🎲 產生新代碼</button>
       </div>
       <div id="pwa-test-msg" style="font-size: 11px; margin-top: 6px; display: none; line-height: 1.4;"></div>
-      <div style="display: flex; gap: 10px; margin-top: 14px;">
+      <div style="display: flex; gap: 10px; margin-top: 16px;">
         <button id="btn-close-settings" class="input-box" style="width: 50%; cursor: pointer;">取消</button>
         <button id="btn-save-settings" class="btn-submit" style="width: 50%; padding: 10px; margin: 0;">儲存</button>
       </div>
@@ -413,7 +553,7 @@
   </div>
 
   <script>
-    // 強制檢查並更新 Service Worker，防止手機卡在舊版快取
+    // 註冊並強制更新 Service Worker
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.register("./sw.js").then(reg => {
         reg.update().catch(() => {});
@@ -429,12 +569,23 @@
     const statusBanner = document.getElementById("status-banner");
     const statusIcon = document.getElementById("status-icon");
     const statusText = document.getElementById("status-text");
+    const countdownBar = document.getElementById("countdown-bar");
+    const countdownText = document.getElementById("countdown-text");
+    const btnPauseCountdown = document.getElementById("btn-pause-countdown");
+    const postSaveActions = document.getElementById("post-save-actions");
+    const btnNewCollect = document.getElementById("btn-new-collect");
+    const btnDoneClose = document.getElementById("btn-done-close");
+
     const pendingSyncBar = document.getElementById("pending-sync-bar");
     const pendingCount = document.getElementById("pending-count");
     const btnFlushSync = document.getElementById("btn-flush-sync");
+
     const localHistoryCard = document.getElementById("local-history-card");
+    const historySummaryTitle = document.getElementById("history-summary-title");
     const localHistoryList = document.getElementById("local-history-list");
+    const btnToggleAll = document.getElementById("btn-toggle-all");
     const btnCopyLocalJson = document.getElementById("btn-copy-local-json");
+    const btnCopyMarkdown = document.getElementById("btn-copy-markdown");
 
     const settingsModal = document.getElementById("settings-modal");
     const btnOpenSettings = document.getElementById("btn-open-settings");
@@ -448,6 +599,7 @@
 
     let selectedCategory = "AI 工具與新技術";
     let detectedPlatform = "網頁";
+    let showAllHistory = false;
 
     const DEFAULT_VAULT_ID = "ff808181a09d98f701a134941a4a52d4";
     const DEFAULT_GAS_URL = "https://script.google.com/macros/s/AKfycbzZiI8iSQrqlDJ24VfmC6sT8QKx3UT11filrHe0PHBluNNw6sb26JWAuY1QMBY3Hzd3wg/exec";
@@ -456,13 +608,147 @@
 
     const PENDING_SYNC_KEY = "ai_pending_sync_queue";
     const LOCAL_NOTES_KEY = "ai_local_notes";
+    const BACKUP_NOTES_KEY = "ai_local_notes_backup";
 
     function getNtfyTopic(vaultId) {
       const cleanId = (vaultId || DEFAULT_VAULT_ID).replace(/[^a-zA-Z0-9_-]/g, "");
       return `ai_vault_${cleanId}`;
     }
 
-    // ─── 佇列與本機快取管理 ───
+    // ─── 1. 防漏 URL 智慧清洗演算法 ───
+    function cleanAndExtractUrl(rawString) {
+      if (!rawString) return { url: "", cleanText: "" };
+
+      // 提取符合 http(s) 的網址片段
+      const candidateRegex = /(https?:\/\/[^\s"'<>()[\]{}]+)/gi;
+      const matches = rawString.match(candidateRegex);
+      if (!matches || matches.length === 0) {
+        return { url: "", cleanText: rawString.trim() };
+      }
+
+      let extracted = matches[0];
+
+      // 剔除 URL 結尾常見的中文或特殊全形半形標點 (解決社群分享結尾帶標點破壞 URL 問題)
+      extracted = extracted.replace(/[.,;:!?。，？！、：；）》」』\]}>]+$/g, "");
+
+      // 移除 YouTube / FB / IG 等常見冗餘追蹤碼 (縮短網址並避免因 token 變更重複收錄)
+      try {
+        const u = new URL(extracted);
+        if (u.hostname.includes("youtube.com") || u.hostname.includes("youtu.be")) {
+          u.searchParams.delete("si");
+          u.searchParams.delete("feature");
+        } else if (u.hostname.includes("facebook.com") || u.hostname.includes("instagram.com")) {
+          u.searchParams.delete("fbclid");
+          u.searchParams.delete("igshid");
+        }
+        extracted = u.toString();
+      } catch (e) {
+        // 若無法透過 URL 物件解析，保持原清洗後網址
+      }
+
+      // 將剩餘內容作為標題文字
+      let remainingText = rawString.replace(matches[0], "").trim();
+      // 去除殘留的引號與括號
+      remainingText = remainingText.replace(/^[「『"“（(【\[\s]+|[」』"”'）)】\]\s]+$/g, "").trim();
+
+      return {
+        url: extracted,
+        cleanText: remainingText
+      };
+    }
+
+    // ─── 2. 本機防漏雙軌資料庫 (2000 筆無上限級容量 + 歷史救援種子自動合併) ───
+    const RECOVERED_SEED_NOTES = [{"id": "note_1793289791445", "url": "https://www.facebook.com/share/p/1TJS6uupkR/", "title": "[Facebook] NTU Academy for Professional Development 課程與實務分享", "platform": "Facebook", "category": "AI 工具與新技術", "note": "手機分享收藏", "summary": "（等待 AI 分析提煉核心重點...）", "aiStatus": "PENDING", "createdAt": "2026/10/30 上午12:03:11"}, {"id": "note_1793266411807", "url": "https://www.facebook.com/share/p/1CjgMJE28Z/", "title": "(20+) Chris Porter - 🚨 This 45K-star GitHub repo is a hands-on course... | Facebook", "platform": "Facebook", "category": "AI 工具與新技術", "note": "手機分享收藏", "summary": "【Facebook 影音內容】（已為您提煉技術方向；分頁已維持開啟並使用專屬副對話）", "aiStatus": "COMPLETED", "createdAt": "2026/10/29 下午5:33:31"}, {"id": "note_1793265927873", "url": "https://www.facebook.com/share/r/1M81FoGeXY/", "title": "[Facebook] AI 自動化與效率工具實戰 Reel 分享 (1M81FoGeXY)", "platform": "Facebook", "category": "AI 工具與新技術", "note": "手機分享收藏", "summary": "【Facebook 影音內容】（已為您提煉技術方向；分頁已維持開啟並使用專屬副對話）", "aiStatus": "COMPLETED", "createdAt": "2026/10/29 下午5:25:27"}, {"id": "note_1793263133539", "url": "https://www.facebook.com/share/r/1Jr9pYGX2f/", "title": "5.1 萬次觀看 · 363 個心情 | 🚨 BREAKING: 60 AI TOOLS YOU NEED TO KNOW IN 2026! 🤯🔥\nFrom writing and images to video, coding, SEO & productivity — this ultimate list has tools for almost every workflow. Save this before you forget it! ⚡\n\n#AITools #AI2026 #AIToolsList #TheAIPlaybook | The AI Playbook", "platform": "Facebook", "category": "AI 工具與新技術", "note": "手機分享收藏", "summary": "🚨 BREAKING: 60 AI TOOLS YOU NEED TO KNOW IN 2026! 🤯🔥 From writing and images to video, coding, SEO & productivity — this ultimate list has tools for almost every workflow. Save this before you forget......", "aiStatus": "COMPLETED", "createdAt": "2026/10/29 下午4:38:53"}, {"id": "note_1793204348709", "url": "https://www.youtube.com/watch?v=YM-6-QhGHgI", "title": "(3480) 從零搞懂 RAG，要搭個人或企業知識庫必學！", "platform": "YouTube", "category": "AI Agent／MCP", "note": "手機分享收藏", "summary": "請為以下 YouTube 影片提供完整繁體中文重點摘要：\n影片標題：(3480) 從零搞懂 RAG，要搭個人或企業知識庫必學！\n影片網址：https://www.youtube.com/watch?v=YM-6-QhGHgI\n\n說明資訊：\n加入我的 Skool，查看完整文章還有提示詞模板：https://www.skool.com/gary-chen\n--\n想幫自己或團隊做一個隨問隨答的第二大腦，或幫 AI Agent 接上專屬知識庫，就會用到 RAG。這支影片用「把 AI 變成巴菲 …\n更多內容\n\n\n字幕內容：\n\n\n【排版規範與編號格式嚴格要求】：\n1. 請採用全局嚴謹的數字階層編號（例如大章節使用【一、】、【二、】或【1.】、【2.】，子重點使用【- 】或【• 】，絕對不要出現大項數字重複從 1. 開始計數的跳號錯誤）。\n2. 請一律使用純文字排版，絕對禁止輸出任何 YouTube 內嵌影片卡片或播放器。\n3. 若引用影片段落，請在重點後方附上標準純文字時間標記，格式統一為：[mm:ss]（例如：[01:53]、[02:24]）。\n4. 整理核心主題、關鍵步驟、洞察與最終結論。...", "aiStatus": "COMPLETED", "createdAt": "2026/10/29 上午12:19:08"}, {"id": "note_1793031636968", "url": "https://www.youtube.com/shorts/haN4HsK1-qI", "title": "(3452) 这个开源项目直接让你的AI智商提升17倍 - YouTube", "platform": "YouTube", "category": "AI 工具與新技術", "note": "手機分享收藏", "summary": "（YouTube 收藏紀錄，可點擊下方「🌐 在分頁開啟並摘要」提取完整重點）", "aiStatus": "COMPLETED", "createdAt": "2026/10/27 上午12:20:36"}, {"id": "note_1792922290275", "url": "https://www.instagram.com/p/De3Ot-UE8oE/?img_index=3&xtok=bG5qcDN5eXEwMDFn", "title": "AI郵報在 Instagram: \"🔥 AI 終於可以跨工具共享記憶了？！\n\n每次從 Claude Code 換到 Codex，都要重新解釋專案背景？之前討論過的需求、修改原因，換個 AI 就全部重來？\n\n騰訊開源 Hy Memory 2.0，其中的 MemHub，就是要解決這個問題！\n\n它能整合 Claude Code、Codex、Cursor 等 AI 工具的工作紀錄，讓不同工具有機會找回：\n\n✅ 專案背景與已確認的需求\n✅ 過去的任務進度\n✅ 程式修改的原因與決策\n\n不過有個重點要注意！\n\n⚠️ 本機優先 ≠ 完全離線\n\n如果使用雲端模型或向量服務，部分資料仍可能傳送到外部，使用前記得確認資料流向。\n\n這次 AI 郵報整理了完整架構、跨工具應用與隱私注意事項。\n\n💬 留言「MemHub」，領取完整文章！\n\n#AI郵報 #MemHub #ClaudeCode #Codex #AI工具 開源AI\"", "platform": "Instagram", "category": "AI 工具與新技術", "note": "手機分享收藏", "summary": "409 likes, 240 comments - aiposthub 於 October 23, 2026 : \"🔥 AI 終於可以跨工具共享記憶了？！ 每次從 Claude Code 換到 Codex，都要重新解釋專案背景？之前討論過的需求、修改原因，換個 AI 就全部重來？ 騰訊開源 Hy Memory 2.0，其中的 MemHub，就是要解決這個問題！ 它能整合 Claude Code、Codex、Cursor 等 AI 工具的工作紀錄，讓不同工具有機會找回： ✅ 專案背景與已確認的需...", "aiStatus": "COMPLETED", "createdAt": "2026/10/25 下午5:58:10"}, {"id": "note_1792862126702", "url": "https://www.facebook.com/share/r/1HEHcRQqu6/", "title": "[Facebook] AI 實用工作流與工具技巧 Reel (1HEHcRQqu6)", "platform": "Facebook", "category": "AI 工具與新技術", "note": "手機分享收藏", "summary": "【Facebook 影音內容】（已於專屬副對話提煉重點；分頁已維持開啟）", "aiStatus": "COMPLETED", "createdAt": "2026/10/25 上午1:15:26"}, {"id": "note_1792857308463", "url": "https://www.threads.com/share/BAVtGj17qt/", "title": "Threads 上的 zenlifebuilder（@zenlifebuilder）", "platform": "Threads", "category": "AI 工具與新技術", "note": "手機分享收藏", "summary": "以前念書的時候就很愛玩放置類遊戲。 我喜歡開著, 看角色自己忙來忙去 覺得有種陪伴感 後來上班改成放森林直播。 看老鷹發呆偶爾有熊經過 🐻 最近則是變成看自己的 AI 員工工作 🤖 以前看角色打怪，現在看 Agent 寫 Code。 放置遊戲玩到最後 變成生產力工具 😂...", "aiStatus": "COMPLETED", "createdAt": "2026/10/24 下午11:55:08"}, {"id": "note_1792761620401", "url": "https://www.facebook.com/share/r/1M9CNTirv6/", "title": "[Facebook] AI 技術與開發應用短影音 (1M9CNTirv6)", "platform": "Facebook", "category": "AI 工具與新技術", "note": "手機分享收藏", "summary": "【Facebook 影音內容】（已為您提煉技術方向。若需提取影片逐字稿，可點「🌐 在分頁開啟並摘要」）", "aiStatus": "COMPLETED", "createdAt": "2026/10/23 下午9:20:20"}, {"id": "note_1792726296037", "url": "https://www.instagram.com/reel/DejhBjdlLUt/?dlrf=dG1kZXRjNzVwZjM2", "title": "AI懶人報在 Instagram: \"向量資料庫要被淘汰了？這個開源方案，用 SQLite 就做出 AI 的長期記憶。\n\n騰訊開源的 TencentDB Agent Memory，GitHub 2.9 萬顆星：\n1️⃣ 把對話整理成四層：原始對話、重點事實、專案場景、對你的長期認識\n2️⃣ 記憶連同向量預設都存在 SQLite，不用另外架向量資料庫\n3️⃣ 三步裝好：抓下 repo、填好模型金鑰、跑 start-all；Claude Code 改個網址、選好 agent 就接上，Codex、Hermes 也能接\n最厲害的是：每一層記憶都能打開來看，就算是摘要，也追得回當初的原話。\n\n專案：github.com/TencentCloud/TencentDB-Agent-Memory\n畫面來源：GitHub TencentCloud、TencentDB Agent Memory 官方（github.com/TencentCloud/TencentDB-Agent-Memory）\n\n追蹤 @ai.lanrenbao 看更多，每天帶你看一個值得用的 AI 工具。\n\n#AI工具 #AIAgent #ClaudeCode #開源 #AI懶人報\"", "platform": "Instagram", "category": "AI 工具與新技術", "note": "手機分享收藏", "summary": "向量資料庫要被淘汰了？這個開源方案，用 SQLite 就做出 AI 的長期記憶。...", "aiStatus": "COMPLETED", "createdAt": "2026/10/23 上午11:31:36"}, {"id": "note_1792725839102", "url": "https://www.instagram.com/reel/Deyt-hJlN-3/?xtok=ZmJwYnFncTNvMG84", "title": "AI懶人報在 Instagram: \"同一個 AI 畫的圖，差這麼多？🤯\n\ndiagram-design 的作者說：模型看得懂內容，缺的是品味。她把品味寫成一套 AI 技能，Claude Code、Codex、Cursor 都能裝。\n\n✦ 一張圖只用一個強調色、細線、不加陰影、對齊格線\n✦ 44 種圖表，每種都有亮色／暗色／雜誌版，連 3D 爆炸圖都有\n✦ 舊的 Mermaid、draw.io 圖丟給它重畫\n✦ 用講的就好，交出一個點兩下就能打開的 HTML 檔\n✦ 給它你的網址，大約一分鐘換成你的品牌配色和字型\n\nGitHub 搜 cathrynlavery/diagram-design（MIT 開源）\n\n追蹤 @ai.lanrenbao 看更多，每天帶你看一個值得用的 AI 工具。\n\n畫面來源：diagram-design 官方（diagramdesign.dev、GitHub README）、GitHub repo 頁（2026/10/15 截圖）、@cathrynlavery（x.com/cathrynlavery/status/2107222360155701709）\n\n#AI工具 #ClaudeCode #資料視覺化 #設計 #AI懶人報\"", "platform": "Instagram", "category": "AI 工具與新技術", "note": "手機分享收藏", "summary": "57 likes, 0 comments - ai.lanrenbao 於 October 22, 2026 : \"同一個 AI 畫的圖，差這麼多？🤯 diagram-design 的作者說：模型看得懂內容，缺的是品味。她把品味寫成一套 AI 技能，Claude Code、Codex、Cursor 都能裝。 ✦ 一張圖只用一個強調色、細線、不加陰影、對齊格線 ✦ 44 種圖表，每種都有亮色／暗色／雜誌版，連 3D 爆炸圖都有 ✦ 舊的 Mermaid、draw.io 圖丟給它重畫 ✦ 用講的就...", "aiStatus": "COMPLETED", "createdAt": "2026/10/23 上午11:23:59"}, {"id": "note_1792725655888", "url": "https://www.instagram.com/reel/DeicLoFhs5O/?vrfl=cTlscmE2bmN2bGV1", "title": "AI平凡人創業學院在 Instagram: \"留言「品味」，我把這五個 Claude Code 設計工具，再加碼一個，全部傳給你\n你是不是用 Claude Code 做網頁，做出來一看就是 AI 做的？\n這五個裝起來，Claude Code 就從只會寫程式，變成也能幫你顧設計：\n① Taste Skill：從高級的設計參考抓出品味，畫面不再廉價。GitHub 已經將近 9.5 萬顆星\n② Web Design Guidelines：照 Vercel 官方設計規範檢查程式碼，上線前先抓出弱點，連很多人會漏掉的無障礙問題也抓得到\n③ Awesome Design：頂尖網站整理出來的整套設計系統，配色、字型、間距、按鈕全部幫你弄好\n④ Image to Code：丟一張設計參考圖，轉成真的能用的程式碼\n⑤ Playwright CLI：讓 Claude 自己開瀏覽器截圖，在你看到之前就先抓出錯誤\n留言「品味」，五個再加碼一個，全部傳給你\n#ClaudeCode #Claude #AI工具 #網頁設計 #vibecoding\"", "platform": "Instagram", "category": "AI 工具與新技術", "note": "手機分享收藏", "summary": "留言「品味」，我把這五個 Claude Code 設計工具，再加碼一個，全部傳給你...", "aiStatus": "COMPLETED", "createdAt": "2026/10/23 上午11:20:55"}, {"id": "note_1792725149793", "url": "https://www.instagram.com/reel/DemC7TfD5e3/?vrfl=M2Nwb3hoYXZybTMw", "title": "AI懶人報在 Instagram: \"叫 AI 用原始人的方式說話，token 少一大半 🪨\n\ncaveman 是一個 skill，裝了以後 AI 只講重點、客套話全刪，程式碼和錯誤訊息一個字都不改。Claude Code、Codex 等 30 多種 AI 工具都能用，開源，GitHub 超過 11 萬星。\n\n① 官方範例：同一個修法，63 個 token 變 20 個\n② 安裝：npx skills add JuliusBrussee/caveman -g，打 /caveman 開始、說 stop caveman 恢復\n③ 最強亮點：還能再調強度，打 /ultracave 連文法都省掉，只剩 14 個 token，修法還是同一個\n\n來源：github.com/JuliusBrussee/caveman ・ caveman.so\n\n畫面來源：caveman 官方（GitHub README、官方 BEFORE／AFTER 圖、logo、官網 caveman.so）\ngithub.com/JuliusBrussee/caveman\n\n追蹤 @ai.lanrenbao 看更多，每天帶你看一個值得用的 AI 工具。\n\n#caveman #ClaudeCode #Codex #AI工具 #AI懶人報 #生產力工具\"", "platform": "Instagram", "category": "AI 工具與新技術", "note": "手機分享收藏", "summary": "叫 AI 用原始人的方式說話，token 少一大半 🪨...", "aiStatus": "COMPLETED", "createdAt": "2026/10/23 上午11:12:29"}, {"id": "note_1792724939073", "url": "https://www.facebook.com/share/v/1RfCCVE3Ht/", "title": "[Facebook] AI 實戰展示影片 (1RfCCVE3Ht)", "platform": "Facebook", "category": "AI 工具與新技術", "note": "手機分享收藏", "summary": "【Facebook 影音內容】（已於專屬副對話提煉重點；分頁已維持開啟）", "aiStatus": "COMPLETED", "createdAt": "2026/10/23 上午11:08:59"}, {"id": "note_1792543628375", "url": "https://www.threads.com/share/_z0LQxswm/", "title": "[Threads] AI 工具與開發者工作流實戰討論 (_z0LQxswm)", "platform": "Threads", "category": "AI 工具與新技術", "note": "手機分享收藏", "summary": "（等待 AI 分析提煉核心重點...）", "aiStatus": "PENDING", "createdAt": "2026/10/21 上午8:47:08"}, {"id": "note_1792475726996", "url": "https://www.instagram.com/reel/DemseS0gJLJ/?rpxt=azlsNHRjZG04Z2Zl", "title": "[Instagram] AI 技術與工作流技巧 Reel (DemseS0gJLJ)", "platform": "Instagram", "category": "AI 工具與新技術", "note": "手機分享收藏", "summary": "（等待 AI 分析提煉核心重點...）", "aiStatus": "PENDING", "createdAt": "2026/10/20 下午1:55:26"}, {"id": "note_1792453114207", "url": "https://www.threads.com/share/BAYBneocaN/", "title": "[Threads] AI 智能體與開發技巧貼文分享 (BAYBneocaN)", "platform": "Threads", "category": "AI 工具與新技術", "note": "手機分享收藏", "summary": "（等待 AI 分析提煉核心重點...）", "aiStatus": "PENDING", "createdAt": "2026/10/20 上午7:38:34"}, {"id": "note_1792140787637", "url": "https://share.google/2jemTRYi7SdwDtqLk", "title": "Anthropic 每日合併程式碼破 3 萬筆，自建版本控制取代 git | 鏈新聞 ABMedia Anthropic 每日合併程式碼破 3 萬筆，自建版本控制取代 git | 鏈新聞 ABMedia", "platform": "網頁文章", "category": "Python／程式開發", "note": "手機分享收藏", "summary": "Anthropic 10 月 13 日在工程部落格公開，公司內部每天合併進程式碼庫的變更，從今年 5 月平均約 2,500 筆，增加到 9 月超過 3 萬筆。寫程式不再是瓶頸，卡住的是原本為人類規模設計的開發基礎設施，於是團隊花五個月自建一套版本控制系統 Scion，把整個單一程式碼庫（monorepo）從 git 完全搬走。 Anthropic 在文中說，寫程式的速度已經不是限制，「瓶頸現在是所有為人類規模打造的開發者基礎設施：版本控制、建置與持續整合」。公司也預期這個成長速度短期內不會放緩，...", "aiStatus": "COMPLETED", "createdAt": "2026/10/16 下午4:53:07"}, {"id": "note_1792130849490", "url": "https://www.facebook.com/share/r/1HtkjHoJzv/", "title": "18 萬次觀看 · 1,947 個心情 | Transforming my bedroom and art with projection mapping💐🦋\n\nSoftware is Dil Studio 👩‍💻\nProjector with Google tv - download the app the project with no hdmi cables! Keep it wireless \n\nIf you want to transform your room comment MAP and I’ll send you the link💬\n\n#projectionmapping #digitalart #immersiveart #creativeprocess #dilmap | Lucinda Dilworth Art", "platform": "Facebook", "category": "AI 工具與新技術", "note": "手機分享收藏", "summary": "Transforming my bedroom and art with projection mapping💐🦋 Software is Dil Studio 👩‍💻 Projector with Google tv - download the app the project with no hdmi cables! Keep it wireless If you want to......", "aiStatus": "COMPLETED", "createdAt": "2026/10/16 下午2:07:29"}, {"id": "note_1792082010352", "url": "https://www.youtube.com/watch?v=r1jHxwwg5tk", "title": "(3315) GitHub 爆紅的 REA 實測，AI 真的能復刻任何軟體？", "platform": "YouTube", "category": "AI 工具與新技術", "note": "手機分享收藏", "summary": "（YouTube 收藏紀錄，可點擊下方「🌐 在分頁開啟並摘要」提取完整重點）", "aiStatus": "COMPLETED", "createdAt": "2026/10/16 上午12:33:30"}, {"id": "note_1792081406123", "url": "https://www.youtube.com/shorts/reU6hFu0gI8", "title": "(3315) Ai也能帮你完成CAD创作的开源项目来了 - YouTube", "platform": "YouTube", "category": "AI 工具與新技術", "note": "手機分享收藏", "summary": "請為以下文章提供精簡扼要的繁體中文重點摘要：\n文章標題：(3315) Ai也能帮你完成CAD创作的开源项目来了 - YouTube\n文章網址：https://www.youtube.com/shorts/reU6hFu0gI8\n\n內文重點：\nTW\n略過導覽功能\n建立\n9+\n首頁\nShorts\n訂閱內容\n個人中心\n@qingqingwang-d4n\n訂閱\nAi也能帮你完成CAD创作的开源项目来了\n557\n16\n分享\nRemix\n\n【排版與編號規範】：\n1. 請使用一致且正確遞增的數字編號（1.、2.、3.，子項使用 - ），切勿在不同段落間重置編號。\n2. 條列核心要點、論述細節與總結。...", "aiStatus": "COMPLETED", "createdAt": "2026/10/16 上午12:23:26"}, {"id": "note_1791996500099", "url": "https://www.instagram.com/reel/Dd82O8dz0hg/?rpxt=aW0ycHY3ajg3bDlj", "title": "[Instagram] AI 效率工具與實作展示 Reel (Dd82O8dz0hg)", "platform": "Instagram", "category": "AI 工具與新技術", "note": "手機分享收藏", "summary": "（Instagram 收藏紀錄，可點擊下方「🌐 在分頁開啟並摘要」提取完整重點）", "aiStatus": "PENDING", "createdAt": "2026/10/15 上午12:48:19"}, {"id": "note_1791992062077", "url": "https://www.facebook.com/share/p/1H2ewhYcux/", "title": "[Facebook] AI 應用與技術重點貼文分享 (1H2ewhYcux)", "platform": "Facebook", "category": "AI 工具與新技術", "note": "手機分享收藏", "summary": "（Facebook 收藏紀錄，可點擊下方「🌐 在分頁開啟並摘要」提取完整重點）", "aiStatus": "PENDING", "createdAt": "2026/10/14 下午11:34:21"}, {"id": "note_1791940082922", "url": "https://www.instagram.com/reel/DeblmWTAPjr/?obrf=MWM1a2NjZ3plaWVkbQ==", "title": "[Instagram] AI 工具與自動化流程 Reel (DeblmWTAPjr)", "platform": "Instagram", "category": "AI 工具與新技術", "note": "手機分享收藏", "summary": "（Instagram 收藏紀錄，可點擊下方「🌐 在分頁開啟並摘要」提取完整重點）", "aiStatus": "COMPLETED", "createdAt": "2026/10/14 上午9:08:02"}, {"id": "note_1791791535454", "url": "https://www.threads.com/@easyanythinghk/post/DeYpsIIgPgA", "title": "[Threads] @easyanythinghk 實用技巧貼文分享", "platform": "Threads", "category": "AI Agent／MCP", "note": "手機分享收藏", "summary": "請為以下文章提供精簡扼要的繁體中文重點摘要：\n文章標題：Threads • 登入\n文章網址：https://www.threads.com/@easyanythinghk/post/DeYpsIIgPgA\n\n內文重點：\nmeng___meng___23 meng___meng___23 meng___meng___23 meng___meng___23 6小時 6小時 6小時 國慶日那天 國慶日那天 197 197 16 16 2 2 jjjiiillljjjiiilll333 jjjiiillljjjiiilll333 jjjiiillljjjiiilll333 jjjiiillljjjiiilll333 10小時 10小時 10小時 아무한테도 안 알려주고 나만 쟁여두려던 거 겨우 푼다... 매일다움 라텍스 요가밴드 이거 진짜 나만 알고 싶었는데 ㅋㅋ 거울 볼 때 얼굴만 신경 썼지 어깨 라인 정리되는 거 실화냐 재고 떨어지기 전에 얼른 장바구니 담아두셈 翻譯 1/2 아무한테도 안 알려주고 나만 쟁여두려던 거 겨우 푼다... 매일다움 라텍스 요가밴...", "aiStatus": "COMPLETED", "createdAt": "2026/10/12 下午3:52:15"}, {"id": "note_1791262936072", "url": "https://gemini.google.com/app/93491f31d00f7db0", "title": "Grow with Google 重點摘要 - Google Gemini", "platform": "網頁文章", "category": "反白摘錄", "note": "手機分享收藏", "summary": "📌 引述內容：\n涵蓋「邁向數位、企業成長、遠距工作、職涯發展、建立事業」5 大主題，區分初級至高級難度，", "aiStatus": "COMPLETED", "createdAt": "2026/10/6 下午1:02:16"}, {"id": "note_1791262845680", "url": "https://www.coursera.org/learn/google-ai-for-app-building?specialization=google-ai&utm_medium=sem&utm_source=gg&utm_campaign=b2c_apac_google-ai_google_ftcof_professional-certificates_cx_dr_bau_gg_sem_pr_s1_en_m_hyb_26-02_x&campaignid=23576170299&adgroupid=198703119786&device=c&keyword=google%20beginner%20coding%20course&matchtype=b&network=g&devicemodel=&creativeid=820661721057&assetgroupid=&targetid=kwd-2494890162947&extensionid=&placement=&gad_source=1&gad_campaignid=23576170299&gbraid=0AAAAADdKX6YsalsxiZZUlhy1xIt8-O2Zm&gclid=CjwKCAjwlY3WBhANEiwApsNrLeqDyQbf1ZVmjakvwt_vNURLLYZpUuP80JuZxOlRtchg2GgwDmqzYxoCXKAQAvD_BwE&isNewUser=true#authMode=signupSuccess", "title": "AI for App Building | Coursera", "platform": "網頁文章", "category": "AI", "note": "手機分享收藏", "summary": "請為以下文章提供精簡扼要的繁體中文重點摘要：\n文章標題：AI for App Building | Coursera\n文章網址：https://www.coursera.org/learn/google-ai-for-app-building?specialization=google-ai&utm_medium=sem&utm_source=gg&utm_campaign=b2c_apac_google-ai_google_ftcof_professional-certificates_cx_dr_bau_gg_sem_pr_s1_en_m_hyb_26-02_x&campaignid=23576170299&adgroupid=198703119786&device=c&keyword=google%20beginner%20coding%20course&matchtype=b&network=g&devicemodel=&creativeid=820661721057&assetgroupid=&targetid=kwd-2494890162947&extensionid=&p...", "aiStatus": "COMPLETED", "createdAt": "2026/10/6 下午1:00:45"}, {"id": "note_123456789", "url": "https://www.facebook.com/share/p/1ai67ECwAN/", "title": "[Facebook] AI 工具與新技術貼文收藏 (1ai67ECwAN)", "platform": "Facebook", "category": "AI 工具與新技術", "note": "手機分享收藏", "summary": "（Facebook 收藏紀錄，可點擊下方「🌐 在分頁開啟並摘要」提取完整重點）", "aiStatus": "PENDING", "createdAt": "2026/10/14 下午7:25:00"}, {"id": "batch_9", "url": "https://www.instagram.com/reel/DdHo6BKv_YD/?mdxt=d2xnMjJjZG9hemZq", "title": "Instagram Reel - 程式開發實用技能", "platform": "Instagram", "category": "Python／程式開發", "note": "使用者手機收藏", "summary": "AI Architecture Lab 在 Instagram: \"This is where GPT-6 ASTRA changes the workflow in architecture. Creating a polished walkthrough directly in Revit is slow and highly manual. But once the Revit model is converted into an interactive Three.js environm...", "aiStatus": "COMPLETED", "createdAt": "2026/10/12 下午3:42:23"}, {"id": "batch_8", "url": "https://www.threads.com/share/_n_9GaDY4/", "title": "Threads - GitHub 7 個開源免費 AI 工具（Hermes、OpenHands、TradingAgents）", "platform": "Threads", "category": "AI Agent／MCP", "note": "手機分享收藏，重點在 Hermes Agent 與 OpenHands", "summary": "GitHub 7個免費開源 AI 工具：1. Hermes+Jev Skills 補上路由與記憶 2. typesafe-ai/skills 決策與工具呼叫 3. OpenHands 自動開發跑指令 4. MoneyPrinterTurbo 影片生成 5. TradingAgents 財報整理 6. LibreChat 統一接各家模型。", "aiStatus": "COMPLETED", "createdAt": "2026/10/12 下午3:42:23"}, {"id": "batch_7", "url": "https://www.instagram.com/reel/DeRKf7Kh4gr/?psln=MzRuZWx2YjhsOWVp", "title": "Instagram Reel - 開發者 AI 工具技巧", "platform": "Instagram", "category": "AI 工具與新技術", "note": "使用者手機收藏", "summary": "（Instagram 貼文，點擊下方「🌐 在分頁開啟並摘要」即可利用已登入畫面完整提取重點）", "aiStatus": "PENDING", "createdAt": "2026/10/12 下午3:42:23"}, {"id": "batch_6", "url": "https://www.instagram.com/reel/DeRRg9qlSvx/?exln=aWRuMXpvd2duaHNq", "title": "Instagram Reel - MCP 外掛與自動化代理", "platform": "Instagram", "category": "AI Agent／MCP", "note": "使用者手機收藏", "summary": "（Instagram 貼文，點擊下方「🌐 在分頁開啟並摘要」即可利用已登入畫面完整提取重點）", "aiStatus": "PENDING", "createdAt": "2026/10/12 下午3:42:23"}, {"id": "batch_5", "url": "https://www.facebook.com/share/r/18YmzZPeKf/", "title": "Facebook Reel - 短影音技術分享", "platform": "Facebook", "category": "AI 工具與新技術", "note": "使用者手機收藏", "summary": "手機收藏內容：手機分享收藏（已送交 AI 對話提煉）", "aiStatus": "COMPLETED", "createdAt": "2026/10/12 下午3:42:23"}, {"id": "batch_4", "url": "https://www.facebook.com/share/v/19bgAE56cK/", "title": "Facebook Video - AI 工作流展示", "platform": "Facebook", "category": "AI 工具與新技術", "note": "使用者手機收藏", "summary": "手機收藏內容：手機分享收藏（已送交 AI 對話提煉）", "aiStatus": "COMPLETED", "createdAt": "2026/10/12 下午3:42:23"}, {"id": "batch_3", "url": "https://www.facebook.com/share/v/1DHkDCV1Jm/", "title": "Facebook Video - AI 自動化與開發實作", "platform": "Facebook", "category": "Python／程式開發", "note": "使用者手機收藏", "summary": "手機收藏內容：手機分享收藏（已送交 AI 對話提煉）", "aiStatus": "COMPLETED", "createdAt": "2026/10/12 下午3:42:23"}, {"id": "batch_2", "url": "https://www.facebook.com/share/p/1ErmPwLSRb/", "title": "Facebook Post - AI 實戰與新工具應用", "platform": "Facebook", "category": "AI 工具與新技術", "note": "使用者手機收藏", "summary": "手機收藏內容：手機分享收藏（已送交 AI 對話提煉）", "aiStatus": "COMPLETED", "createdAt": "2026/10/12 下午3:42:23"}, {"id": "batch_10", "url": "https://www.instagram.com/reel/DeHRneTlV66/?cplk=Zm40cXI2enJwZ3lj", "title": "Instagram Reel - AI 自動化外掛設定", "platform": "Instagram", "category": "AI Agent／MCP", "note": "使用者手機收藏", "summary": "【已送至 AI 對話視窗】請至上方「對話」分頁檢視 Gemini / ChatGPT 的即時結構化分析與分類結果。", "aiStatus": "COMPLETED", "createdAt": "2026/10/12 下午3:42:23"}, {"id": "batch_1", "url": "https://www.instagram.com/reel/DePAJePT3O5/?xtok=MWxoODlicGdyeXQyNg==", "title": "Claude Code / ECC AI 代理工作流設定教學", "platform": "Instagram", "category": "AI Agent／MCP", "note": "使用者手機收藏", "summary": "（Instagram 貼文，點擊下方「🌐 在分頁開啟並摘要」即可利用已登入畫面完整提取重點）", "aiStatus": "PENDING", "createdAt": "2026/10/12 下午3:42:23"}];
+
+    function normalizeNoteUrl(u) {
+      if (!u) return "";
+      try {
+        const uObj = new URL(u.trim());
+        return (uObj.origin + uObj.pathname.replace(/\/+$/, "") + uObj.search).toLowerCase();
+      } catch (e) {
+        return u.trim().replace(/\/+$/, "").toLowerCase();
+      }
+    }
+
+    function getLocalNotes() {
+      try {
+        let primary = [];
+        try { primary = JSON.parse(localStorage.getItem(LOCAL_NOTES_KEY) || "[]"); } catch (e) {}
+        let backup = [];
+        try { backup = JSON.parse(localStorage.getItem(BACKUP_NOTES_KEY) || "[]"); } catch (e) {}
+        const baseList = (Array.isArray(primary) && primary.length >= backup.length) ? primary : (Array.isArray(backup) ? backup : []);
+
+        // 自動無損合併找回的 39 筆歷史紀錄，同時 100% 保留手機本機獨有的紀錄
+        const seen = new Set();
+        const merged = [];
+        for (const item of baseList) {
+          if (!item || !item.url) continue;
+          const k = normalizeNoteUrl(item.url);
+          if (!seen.has(k)) {
+            seen.add(k);
+            merged.push(item);
+          }
+        }
+        let seedAdded = false;
+        for (const seedItem of RECOVERED_SEED_NOTES) {
+          if (!seedItem || !seedItem.url) continue;
+          const k = normalizeNoteUrl(seedItem.url);
+          if (!seen.has(k)) {
+            seen.add(k);
+            merged.push({ ...seedItem, synced: true });
+            seedAdded = true;
+          }
+        }
+        if (seedAdded) {
+          const trimmed = merged.slice(0, 2000);
+          try {
+            localStorage.setItem(LOCAL_NOTES_KEY, JSON.stringify(trimmed));
+            localStorage.setItem(BACKUP_NOTES_KEY, JSON.stringify(trimmed));
+          } catch (e) {}
+          return trimmed;
+        }
+        return merged;
+      } catch (e) {
+        return RECOVERED_SEED_NOTES;
+      }
+    }
+
+    function saveLocalNote(noteItem, synced = false) {
+      try {
+        const local = getLocalNotes();
+        const itemWithFlag = {
+          ...noteItem,
+          synced: Boolean(synced),
+          updatedAt: Date.now()
+        };
+        const normTarget = normalizeNoteUrl(noteItem.url);
+        const dupIdx = local.findIndex(n => normalizeNoteUrl(n.url) === normTarget);
+        if (dupIdx !== -1) {
+          local[dupIdx] = { ...local[dupIdx], ...itemWithFlag };
+        } else {
+          local.unshift(itemWithFlag);
+        }
+        const trimmed = local.slice(0, 2000);
+        localStorage.setItem(LOCAL_NOTES_KEY, JSON.stringify(trimmed));
+        localStorage.setItem(BACKUP_NOTES_KEY, JSON.stringify(trimmed));
+        renderLocalHistoryUI();
+      } catch (e) {
+        console.warn("本機寫入警告:", e);
+      }
+    }
+
+    function markLocalNotesSynced(urls) {
+      try {
+        const urlSet = new Set(urls.map(u => normalizeNoteUrl(u)));
+        const local = getLocalNotes().map(n => urlSet.has(normalizeNoteUrl(n.url)) ? { ...n, synced: true } : n);
+        const trimmed = local.slice(0, 2000);
+        localStorage.setItem(LOCAL_NOTES_KEY, JSON.stringify(trimmed));
+        localStorage.setItem(BACKUP_NOTES_KEY, JSON.stringify(trimmed));
+        renderLocalHistoryUI();
+      } catch (e) {}
+    }
+
+    // ─── 3. 待補傳佇列管理 ───
     function getPendingQueue() {
       try {
         return JSON.parse(localStorage.getItem(PENDING_SYNC_KEY) || "[]");
@@ -473,17 +759,9 @@
 
     function savePendingQueue(queue) {
       try {
-        localStorage.setItem(PENDING_SYNC_KEY, JSON.stringify(queue.slice(0, 100)));
+        localStorage.setItem(PENDING_SYNC_KEY, JSON.stringify(queue.slice(0, 150)));
       } catch (e) {}
       updatePendingBarUI();
-    }
-
-    function getLocalNotes() {
-      try {
-        return JSON.parse(localStorage.getItem(LOCAL_NOTES_KEY) || "[]");
-      } catch (e) {
-        return [];
-      }
     }
 
     function updatePendingBarUI() {
@@ -499,64 +777,80 @@
       renderLocalHistoryUI();
     }
 
+    // ─── 4. 渲染本機清單 (可見、可複製、消弭遺漏焦慮) ───
     function renderLocalHistoryUI() {
-      if (!localHistoryCard || !localHistoryList) return;
+      if (!localHistoryList || !historySummaryTitle) return;
       const notes = getLocalNotes();
+      const pendingCountNum = getPendingQueue().length;
+      const syncedCount = notes.filter(n => n.synced).length;
+
+      historySummaryTitle.innerText = `📱 手機已存防漏庫 (${notes.length} 筆 | 🟢 ${syncedCount} 雲端 | 🟡 ${pendingCountNum} 待補)`;
+
       if (notes.length === 0) {
-        localHistoryCard.style.display = "none";
+        localHistoryList.innerHTML = `<div style="text-align:center; color:#64748b; padding:12px; font-size:12px;">尚無本機紀錄，分享網址或貼上即可永久存入。</div>`;
         return;
       }
-      localHistoryCard.style.display = "block";
-      localHistoryList.innerHTML = notes.slice(0, 5).map(n => `
+
+      const displayList = showAllHistory ? notes : notes.slice(0, 50);
+      localHistoryList.innerHTML = displayList.map(n => `
         <div class="local-item">
-          <div style="display:flex; justify-content:space-between; color:#e2e8f0; font-weight:600;">
-            <span>[${n.platform || "網頁"}] ${n.category || "未分類"}</span>
-            <span style="color:#94a3b8; font-size:11px;">${n.synced ? "☁️ 已同步" : "📦 本機暫存"}</span>
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span style="color:#94a3b8; font-size:11px;">[${n.platform || "網頁"}] ${n.category || "未分類"}</span>
+            <span class="status-badge ${n.synced ? "synced" : "pending"}">${n.synced ? "🟢 已上雲端" : "🟡 待補傳"}</span>
           </div>
-          <a class="local-item-url" href="${n.url}" target="_blank">${n.title || n.url}</a>
+          <div class="local-item-title">${escapeHtml(n.title || n.url)}</div>
+          <a class="local-item-url" href="${n.url}" target="_blank" rel="noopener">${n.url}</a>
+          <div class="local-item-meta">
+            <span>${n.createdAt || "剛剛"}</span>
+            ${n.note ? `<span style="color:#cbd5e1;">備註: ${escapeHtml(n.note)}</span>` : ""}
+          </div>
         </div>
       `).join("");
     }
 
+    function escapeHtml(str) {
+      return String(str || "").replace(/[&<>"']/g, m => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+      }[m]));
+    }
+
+    // 展開 / 收合歷史
+    if (btnToggleAll) {
+      btnToggleAll.addEventListener("click", () => {
+        showAllHistory = !showAllHistory;
+        btnToggleAll.innerText = showAllHistory ? "收合 (顯示前50筆)" : `展開全部 (${getLocalNotes().length}筆)`;
+        renderLocalHistoryUI();
+      });
+    }
+
+    // 複製全部備份 JSON
     if (btnCopyLocalJson) {
       btnCopyLocalJson.addEventListener("click", async () => {
         const notes = getLocalNotes();
         try {
           await navigator.clipboard.writeText(JSON.stringify(notes, null, 2));
-          showBanner("success", `已複製 ${notes.length} 筆本機收藏 JSON 至剪貼簿！`);
+          showBanner("success", `已複製全部 ${notes.length} 筆收藏 JSON，手機資料永不丟失！`);
         } catch (e) {
-          showBanner("warning", "複製失敗，請手動選取。");
+          showBanner("warning", "剪貼簿權限受限，請長按反白選取。");
         }
       });
     }
 
-    function saveLocalNote(noteItem, synced = false) {
-      try {
-        const local = getLocalNotes();
-        const itemWithFlag = { ...noteItem, synced: Boolean(synced) };
-        const dupIdx = local.findIndex(n => n.url === noteItem.url);
-        if (dupIdx !== -1) {
-          local[dupIdx] = { ...local[dupIdx], ...itemWithFlag };
-        } else {
-          local.unshift(itemWithFlag);
+    // 複製 Markdown 清單
+    if (btnCopyMarkdown) {
+      btnCopyMarkdown.addEventListener("click", async () => {
+        const notes = getLocalNotes();
+        const mdText = notes.map((n, i) => `${i + 1}. [${n.title || n.url}](${n.url}) - 分類: ${n.category || "未分類"} | 平台: ${n.platform || "網頁"}`).join("\n");
+        try {
+          await navigator.clipboard.writeText(mdText);
+          showBanner("success", `已複製 ${notes.length} 筆 Markdown 清單至剪貼簿！`);
+        } catch (e) {
+          showBanner("warning", "複製失敗，請手動確認。");
         }
-        localStorage.setItem(LOCAL_NOTES_KEY, JSON.stringify(local.slice(0, 100)));
-        renderLocalHistoryUI();
-      } catch (e) {
-        console.warn("寫入本地失敗:", e);
-      }
+      });
     }
 
-    function markLocalNotesSynced(urls) {
-      try {
-        const urlSet = new Set(urls);
-        const local = getLocalNotes().map(n => urlSet.has(n.url) ? { ...n, synced: true } : n);
-        localStorage.setItem(LOCAL_NOTES_KEY, JSON.stringify(local));
-        renderLocalHistoryUI();
-      } catch (e) {}
-    }
-
-    // ─── Engine 0: Google 雲端試算表 (GAS) ───
+    // ─── 5. 三通道雲端同步防線 (GAS + ntfy 串流 + restful 備援視窗) ───
     async function pushToGasSheet(targetGasUrl, items) {
       if (!targetGasUrl || !targetGasUrl.trim().startsWith("http")) {
         throw new Error("未設定 GAS 網址");
@@ -565,43 +859,71 @@
         const resp = await fetch(targetGasUrl.trim(), {
           method: "POST",
           headers: { "Content-Type": "text/plain;charset=utf-8" },
-          body: JSON.stringify(item)
+          body: JSON.stringify(item),
+          keepalive: true
         });
         if (!resp.ok) throw new Error(`GAS HTTP ${resp.status}`);
         const res = await resp.json();
-        if (!res.success) throw new Error(res.error || "GAS 儲存異常");
+        if (!res.success) throw new Error(res.error || "GAS 回傳異常");
       }
       return true;
     }
 
-    // ─── Engine A: ntfy.sh 即時訊息佇列（無 980 Bytes 容量限制、免覆寫） ───
     async function pushToNtfyStream(targetVaultId, items) {
       const topic = getNtfyTopic(targetVaultId);
       const endpoint = `https://ntfy.sh/${topic}`;
-      for (const item of items) {
-        const payloadStr = JSON.stringify({
+      // 若僅 1~2 筆，直接發送單筆格式（100% 相容新舊版電腦端擴充功能）
+      if (items.length <= 2) {
+        for (const item of items) {
+          const payloadStr = JSON.stringify({
+            id: item.id,
+            url: item.url,
+            title: (item.title || "").slice(0, 140),
+            platform: item.platform || "網頁",
+            category: item.category || "AI 工具與新技術",
+            note: (item.note || "").slice(0, 140),
+            aiStatus: item.aiStatus || "PENDING",
+            createdAt: item.createdAt
+          });
+          const resp = await fetch(endpoint, {
+            method: "POST",
+            headers: { "Content-Type": "text/plain; charset=utf-8" },
+            body: payloadStr,
+            keepalive: true
+          });
+          if (!resp.ok) throw new Error(`ntfy HTTP ${resp.status}`);
+        }
+        return true;
+      }
+
+      // 若超過 2 筆，採用分批封包 (每批 8 筆，控制在 3KB 內，杜絕 HTTP 429 限流與 4 筆截斷)
+      const CHUNK_SIZE = 8;
+      for (let i = 0; i < items.length; i += CHUNK_SIZE) {
+        const chunk = items.slice(i, i + CHUNK_SIZE).map(item => ({
           id: item.id,
           url: item.url,
-          title: (item.title || "").slice(0, 120),
+          title: (item.title || "").slice(0, 100),
           platform: item.platform || "網頁",
           category: item.category || "AI 工具與新技術",
-          note: (item.note || "").slice(0, 120),
+          note: (item.note || "").slice(0, 80),
           aiStatus: item.aiStatus || "PENDING",
           createdAt: item.createdAt
+        }));
+        const payloadStr = JSON.stringify({
+          type: "batch_notes",
+          notes: chunk
         });
         const resp = await fetch(endpoint, {
           method: "POST",
           headers: { "Content-Type": "text/plain; charset=utf-8" },
-          body: payloadStr
+          body: payloadStr,
+          keepalive: true
         });
-        if (!resp.ok) {
-          throw new Error(`串流引擎 HTTP ${resp.status}`);
-        }
+        if (!resp.ok) throw new Error(`ntfy batch HTTP ${resp.status}`);
       }
       return true;
     }
 
-    // ─── Engine B: restful-api.dev 輕量滑動視窗（嚴格限制 data < 800 字元，根絕 HTTP 500） ───
     async function pushToRestfulSlidingWindow(targetVaultId, items) {
       const vaultUrl = `https://api.restful-api.dev/objects/${targetVaultId}`;
       let existingNotes = [];
@@ -609,7 +931,7 @@
         const getResp = await fetch(vaultUrl, { method: "GET" });
         if (getResp && getResp.ok) {
           const json = await getResp.json();
-          if (json && json.data && Array.isArray(json.data.notes)) {
+          if (json?.data?.notes && Array.isArray(json.data.notes)) {
             existingNotes = json.data.notes;
           }
         }
@@ -634,7 +956,7 @@
         }
       });
 
-      let windowNotes = existingNotes.slice(0, 4);
+      let windowNotes = existingNotes.slice(0, 5);
       let dataObj = { vaultName: "AIVault", notes: windowNotes };
       while (windowNotes.length > 1 && JSON.stringify(dataObj).length > 800) {
         windowNotes.pop();
@@ -647,15 +969,14 @@
         body: JSON.stringify({
           name: "jim279ss_ai_notes_vault",
           data: dataObj
-        })
+        }),
+        keepalive: true
       });
-      if (!putResp.ok) {
-        throw new Error(`備援庫 HTTP ${putResp.status}`);
-      }
+      if (!putResp.ok) throw new Error(`備援庫 HTTP ${putResp.status}`);
       return true;
     }
 
-    // ─── 自動補傳佇列至雲端（三引擎並發容錯：Google 試算表 + ntfy 串流 + 精簡視窗） ───
+    // 補傳佇列核心 (關鍵修正：必須由無容量上限的 ntfy 串流或 GAS 成功，才可清空佇列！嚴禁因 4 筆上限的 restful 備援庫成功而誤刪佇列)
     async function flushPendingSyncQueue(silent = false) {
       const queue = getPendingQueue();
       if (!queue || queue.length === 0) return true;
@@ -672,26 +993,71 @@
 
         const gasOk = results[0].status === "fulfilled" && results[0].value === true;
         const ntfyOk = results[1].status === "fulfilled" && results[1].value === true;
-        const restfulOk = results[2].status === "fulfilled" && results[2].value === true;
 
-        if (gasOk || ntfyOk || restfulOk) {
+        if (gasOk || ntfyOk) {
           markLocalNotesSynced(queue.map(q => q.url));
           savePendingQueue([]);
           if (!silent) {
-            const channelName = gasOk ? "Google 雲端試算表" : "雙引擎雲端知識庫";
-            showBanner("success", `成功將 ${queue.length} 筆收藏同步至${channelName}！`);
+            const dest = gasOk ? "Google 雲端試算表" : "無上限即時串流佇列";
+            showBanner("success", `成功將 ${queue.length} 筆收藏同步至 ${dest}！`);
           }
           return true;
         }
 
-        const errMsg = results[0].reason?.message || results[1].reason?.message || "網路無回應";
+        const errMsg = results[1].reason?.message || results[0].reason?.message || "暫無網路回應";
         throw new Error(errMsg);
       } catch (err) {
-        console.warn("雲端同步暫緩:", err);
+        console.warn("補傳佇列保留:", err);
         if (!silent) {
-          showBanner("warning", `目前已安全保存在手機本機！雲端待網路恢復後將自動補傳 (${err.message})。`);
+          showBanner("warning", `已安全保留在手機本機！待連線通暢將自動續傳 (${err.message})。`);
         }
         return false;
+      }
+    }
+
+    // ─── 全量歷史差額自動回補 (解決 ntfy 12 小時過期與舊版 4 筆截斷問題，自動救回手機 localStorage 內所有紀錄) ───
+    async function autoBackfillLocalHistoryToCloud(forceAll = false) {
+      try {
+        const localNotes = getLocalNotes();
+        if (!localNotes || localNotes.length === 0) return 0;
+
+        const targetId = cloudVaultId || DEFAULT_VAULT_ID;
+        const topic = getNtfyTopic(targetId);
+        let cloudUrls = new Set();
+
+        if (!forceAll) {
+          const pollResp = await fetch(`https://ntfy.sh/${topic}/json?poll=1&since=all`, { cache: "no-store" });
+          if (pollResp.ok) {
+            const text = await pollResp.text();
+            const lines = text.trim().split("\n").filter(Boolean);
+            for (const line of lines) {
+              try {
+                const evt = JSON.parse(line);
+                if (evt && evt.event === "message" && evt.message) {
+                  const obj = JSON.parse(evt.message);
+                  if (obj && obj.url) {
+                    cloudUrls.add(normalizeNoteUrl(obj.url));
+                  } else if (obj && Array.isArray(obj.notes)) {
+                    obj.notes.forEach(n => n?.url && cloudUrls.add(normalizeNoteUrl(n.url)));
+                  }
+                }
+              } catch (e) {}
+            }
+          }
+        }
+
+        const missingNotes = forceAll
+          ? localNotes
+          : localNotes.filter(n => n && n.url && !cloudUrls.has(normalizeNoteUrl(n.url)));
+
+        if (missingNotes.length === 0) return 0;
+
+        await pushToNtfyStream(targetId, missingNotes);
+        markLocalNotesSynced(missingNotes.map(n => n.url));
+        return missingNotes.length;
+      } catch (e) {
+        console.warn("全量差額回補略過:", e);
+        return 0;
       }
     }
 
@@ -705,105 +1071,7 @@
       });
     }
 
-    // ─── 設定彈窗 ───
-    if (settingVaultId) settingVaultId.value = cloudVaultId;
-    if (settingGasUrl) settingGasUrl.value = gasApiUrl;
-
-    btnOpenSettings.addEventListener("click", () => {
-      if (pwaTestMsg) pwaTestMsg.style.display = "none";
-      if (settingVaultId) settingVaultId.value = cloudVaultId;
-      if (settingGasUrl) settingGasUrl.value = gasApiUrl;
-      settingsModal.style.display = "flex";
-    });
-    btnCloseSettings.addEventListener("click", () => settingsModal.style.display = "none");
-
-    btnSaveSettings.addEventListener("click", () => {
-      cloudVaultId = (settingVaultId.value || "").trim() || DEFAULT_VAULT_ID;
-      gasApiUrl = (settingGasUrl.value || "").trim();
-      localStorage.setItem("ai_cloud_vault_id", cloudVaultId);
-      localStorage.setItem("ai_knowledge_gas_url", gasApiUrl);
-      settingsModal.style.display = "none";
-      showBanner("success", "雲端設定已儲存！");
-      flushPendingSyncQueue(true);
-    });
-
-    // 產生新代碼
-    if (btnGenVaultPwa) {
-      btnGenVaultPwa.addEventListener("click", async () => {
-        if (!confirm("是否產生全新的共同雲端代碼？（電腦端也需要輸入此代碼以保持同步）")) return;
-        pwaTestMsg.style.display = "block";
-        pwaTestMsg.style.color = "#93c5fd";
-        pwaTestMsg.innerText = "⏳ 正在建立新金鑰...";
-        try {
-          const resp = await fetch("https://api.restful-api.dev/objects", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              name: "jim279ss_ai_notes_vault",
-              data: { vaultName: "AIVault", notes: [] }
-            })
-          });
-          if (!resp.ok) throw new Error("HTTP " + resp.status);
-          const data = await resp.json();
-          if (data && data.id) {
-            settingVaultId.value = data.id;
-            pwaTestMsg.style.color = "#a7f3d0";
-            pwaTestMsg.innerText = `✅ 新代碼建立成功！請點擊「儲存」，並將此代碼填入電腦端。`;
-          }
-        } catch (e) {
-          // 即使 restful-api 異常，也可直接生成隨機種子給 ntfy 串流引擎使用
-          const fallbackId = "vault_" + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
-          settingVaultId.value = fallbackId;
-          pwaTestMsg.style.color = "#a7f3d0";
-          pwaTestMsg.innerText = `✅ 已產生新串流代碼 (${fallbackId})！請點擊「儲存」並填入電腦端。`;
-        }
-      });
-    }
-
-    // 測試連線
-    if (btnTestCloudPwa) {
-      btnTestCloudPwa.addEventListener("click", async () => {
-        const testGas = (settingGasUrl.value || "").trim();
-        const testVault = (settingVaultId.value || "").trim() || DEFAULT_VAULT_ID;
-
-        pwaTestMsg.style.display = "block";
-        pwaTestMsg.style.color = "#93c5fd";
-        pwaTestMsg.innerText = "⏳ 正在測試雙引擎雲端連線...";
-
-        try {
-          const topic = getNtfyTopic(testVault);
-          const [ntfyRes, gasRes] = await Promise.allSettled([
-            fetch(`https://ntfy.sh/${topic}/json?poll=1&since=all`).then(r => r.ok ? r.text() : Promise.reject(new Error(`HTTP ${r.status}`))),
-            (testGas && testGas.startsWith("http"))
-              ? fetch(testGas, { method: "GET" }).then(r => r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`)))
-              : Promise.reject(new Error("未設定"))
-          ]);
-
-          const ntfyOk = ntfyRes.status === "fulfilled";
-          const gasOk = gasRes.status === "fulfilled" && gasRes.value?.success;
-
-          if (gasOk && ntfyOk) {
-            const gCount = gasRes.value.notes ? gasRes.value.notes.length : 0;
-            pwaTestMsg.style.color = "#a7f3d0";
-            pwaTestMsg.innerText = `✅ Google 試算表 (${gCount} 筆) 與雙引擎串流皆連線正常！`;
-          } else if (ntfyOk) {
-            const count = ntfyRes.value.trim() ? ntfyRes.value.trim().split("\n").filter(Boolean).length : 0;
-            pwaTestMsg.style.color = "#a7f3d0";
-            pwaTestMsg.innerText = `✅ 雙引擎串流雲端連線正常！現有 ${count} 筆同步訊號（無容量限制，隨時可存）。`;
-          } else if (gasOk) {
-            pwaTestMsg.style.color = "#a7f3d0";
-            pwaTestMsg.innerText = `✅ Google 試算表連線成功！`;
-          } else {
-            throw new Error("請檢查網路連線");
-          }
-        } catch (e) {
-          pwaTestMsg.style.color = "#fecaca";
-          pwaTestMsg.innerText = `❌ 雲端連線異常: ${e.message}`;
-        }
-      });
-    }
-
-    // ─── 平台識別 ───
+    // ─── 6. 平台識別與自動分類 ───
     function identifyPlatform(url) {
       if (!badgePlatform) return;
       badgePlatform.className = "platform-badge";
@@ -835,80 +1103,19 @@
       }
     }
 
-    // ─── 解析來自 Android 系統分享的 Query 參數 (Web Share Target) ───
-    let autoSaveTimer = null;
-
-    function parseShareTarget() {
-      const params = new URLSearchParams(window.location.search);
-      const rawTitle = params.get("title") || "";
-      const rawText = params.get("text") || "";
-      const rawUrl = params.get("url") || "";
-
-      const fullContent = [rawTitle, rawText, rawUrl].filter(Boolean).join(" ");
-      if (!fullContent) {
-        flushPendingSyncQueue(true);
-        updatePendingBarUI();
-        return;
-      }
-
-      const urlRegex = /(https?:\/\/[^\s]+)/gi;
-      const match = fullContent.match(urlRegex);
-
-      let finalUrl = "";
-      if (rawUrl && rawUrl.startsWith("http")) {
-        finalUrl = rawUrl;
-      } else if (match && match.length > 0) {
-        finalUrl = match[0];
-      }
-
-      let cleanText = fullContent.replace(urlRegex, "").trim();
-      if (!cleanText) cleanText = rawTitle || "";
-
-      inputUrl.value = finalUrl;
-      inputTitle.value = cleanText;
-
-      identifyPlatform(finalUrl);
-      autoPredictCategory(finalUrl + " " + cleanText);
-
-      if (finalUrl) {
-        triggerInstantAutoSave();
-      }
-    }
-
-    function triggerInstantAutoSave() {
-      showBanner("success", "正在為您自動快速收藏...（點畫面可暫停修改）");
-      btnSubmit.innerHTML = "<span>⚡ 自動快速儲存中...</span>";
-
-      document.body.addEventListener("click", cancelAutoSaveOnce, { once: true });
-
-      autoSaveTimer = setTimeout(() => {
-        btnSubmit.click();
-      }, 900);
-    }
-
-    function cancelAutoSaveOnce() {
-      if (autoSaveTimer) {
-        clearTimeout(autoSaveTimer);
-        autoSaveTimer = null;
-        showBanner("success", "已暫停自動儲存，您可以手動調整分類或輸入備註。");
-        btnSubmit.innerHTML = "<span>💾 一鍵收藏至 AI 知識庫</span>";
-      }
-    }
-
     function autoPredictCategory(content) {
-      const text = content.toLowerCase();
+      const text = (content || "").toLowerCase();
       let target = "AI 工具與新技術";
 
-      if (/bim|revit|dynamo|navisworks|ifc|建築/i.test(text)) {
+      if (/bim|revit|dynamo|navisworks|ifc|建築|結構|機電/i.test(text)) {
         target = "BIM／Revit";
       } else if (/mcp|agent|claude|chatgpt|codex|ecc|cursor|智能體|外掛|workflow/i.test(text)) {
         target = "AI Agent／MCP";
-      } else if (/python|腳本|程式|code|github|pip|pandas|fastapi/i.test(text)) {
+      } else if (/python|腳本|程式|code|github|pip|pandas|fastapi|javascript/i.test(text)) {
         target = "Python／程式開發";
-      } else if (/ai|gemini|deepseek|sora|工具|開源|教學/i.test(text)) {
+      } else if (/ai|gemini|deepseek|sora|工具|開源|教學|模型/i.test(text)) {
         target = "AI 工具與新技術";
       }
-
       setCategory(target);
     }
 
@@ -923,7 +1130,6 @@
       });
     }
 
-    // 分類點擊切換
     categoryChips.addEventListener("click", (e) => {
       const btn = e.target.closest(".chip-btn");
       if (btn) {
@@ -934,21 +1140,104 @@
 
     inputUrl.addEventListener("input", (e) => identifyPlatform(e.target.value));
 
-    // ─── 一鍵送出收藏（本機保底 + 雙引擎串流雲端同步） ───
+    // ─── 7. Android/iOS Web Share Target 接收處理與防重複 ───
+    let autoSaveTimer = null;
+    let countdownRemaining = 3;
+    let countdownInterval = null;
+
+    function parseShareTarget() {
+      const params = new URLSearchParams(window.location.search);
+      const rawTitle = params.get("title") || "";
+      const rawText = params.get("text") || "";
+      const rawUrl = params.get("url") || "";
+
+      const rawCombined = [rawTitle, rawText, rawUrl].filter(Boolean).join(" ");
+      if (!rawCombined) {
+        flushPendingSyncQueue(true);
+        updatePendingBarUI();
+        return;
+      }
+
+      // 智慧清洗抽取
+      const extracted = cleanAndExtractUrl(rawCombined);
+      let finalUrl = rawUrl && rawUrl.startsWith("http") ? rawUrl : extracted.url;
+      let finalTitle = extracted.cleanText || rawTitle || "";
+
+      inputUrl.value = finalUrl;
+      inputTitle.value = finalTitle;
+
+      identifyPlatform(finalUrl);
+      autoPredictCategory(finalUrl + " " + finalTitle);
+
+      // 關鍵防漏：立即清除網址列 Query，避免使用者重整或再次開啟時被舊分享覆蓋
+      try {
+        if (window.history.replaceState) {
+          window.history.replaceState({}, document.title, window.location.pathname);
+        }
+      } catch (e) {}
+
+      if (finalUrl) {
+        startFriendlyAutoSaveCountdown();
+      }
+    }
+
+    // 友善 3 秒倒數 (帶視覺進度與暫停按鈕)
+    function startFriendlyAutoSaveCountdown() {
+      countdownRemaining = 3;
+      countdownBar.style.display = "flex";
+      countdownText.innerText = `⚡ 正在為您快速預備收藏 (${countdownRemaining}s)...`;
+
+      // 監聽使用者觸控畫面任一處即暫停自動送出，給予充分控制感
+      document.body.addEventListener("touchstart", pauseCountdownOnce, { passive: true, once: true });
+      document.body.addEventListener("click", pauseCountdownOnce, { once: true });
+
+      countdownInterval = setInterval(() => {
+        countdownRemaining--;
+        if (countdownRemaining > 0) {
+          countdownText.innerText = `⚡ 正在為您快速預備收藏 (${countdownRemaining}s)...`;
+        } else {
+          clearInterval(countdownInterval);
+          countdownBar.style.display = "none";
+          btnSubmit.click();
+        }
+      }, 1000);
+    }
+
+    function pauseCountdownOnce() {
+      if (countdownInterval) {
+        clearInterval(countdownInterval);
+        countdownInterval = null;
+        countdownBar.style.display = "none";
+        showBanner("success", "已暫停自動儲存，您可以手動調整分類或加入備註。");
+      }
+    }
+
+    if (btnPauseCountdown) {
+      btnPauseCountdown.addEventListener("click", (e) => {
+        e.stopPropagation();
+        pauseCountdownOnce();
+      });
+    }
+
+    // ─── 8. 一鍵送出收藏 (本機100%保底 + 雲端三通道) ───
     btnSubmit.addEventListener("click", async () => {
-      const url = inputUrl.value.trim();
-      if (!url) {
-        showBanner("error", "請輸入或分享有效的網址！");
+      pauseCountdownOnce();
+      const rawInput = inputUrl.value.trim();
+      const cleanResult = cleanAndExtractUrl(rawInput);
+      const url = cleanResult.url || rawInput;
+
+      if (!url || !url.startsWith("http")) {
+        showBanner("error", "請輸入或分享有效的 http/https 網址！");
         return;
       }
 
       btnSubmit.disabled = true;
-      btnSubmit.innerHTML = "<span>⏳ 正在存入知識庫...</span>";
+      btnSubmit.innerHTML = "<span>⏳ 正在雙軌存入知識庫...</span>";
 
       const noteItem = {
-        id: "note_" + Date.now(),
+        id: "note_" + Date.now() + "_" + Math.random().toString(36).slice(2, 6),
         url: url,
-        title: inputTitle.value.trim(),
+        title: inputTitle.value.trim() || cleanResult.cleanText || url,
         platform: detectedPlatform,
         category: selectedCategory,
         note: inputNote.value.trim(),
@@ -957,10 +1246,10 @@
         createdAt: new Date().toLocaleString("zh-TW")
       };
 
-      // 第一步：100% 立即寫入手機本機保存
+      // 第一重防漏：100% 立即寫入手機本機雙重備份庫
       saveLocalNote(noteItem, false);
 
-      // 第二步：排入待同步佇列
+      // 第二重防漏：排入待同步佇列
       const queue = getPendingQueue();
       const existIdx = queue.findIndex(n => n.url === noteItem.url);
       if (existIdx !== -1) {
@@ -970,28 +1259,121 @@
       }
       savePendingQueue(queue);
 
-      // 第三步：透過雙引擎（ntfy 串流 + 精簡視窗庫）同步至雲端
+      // 第三重防漏：並發發送三通道同步
       const syncOk = await flushPendingSyncQueue(true);
 
+      btnSubmit.disabled = false;
       if (syncOk) {
-        btnSubmit.innerHTML = "<span>✅ 收藏完成！</span>";
+        btnSubmit.innerHTML = "<span>✅ 100% 成功收藏至雲端！</span>";
         btnSubmit.style.background = "#10b981";
-        showBanner("success", "收藏成功！已透過雙引擎即時存入雲端知識庫");
-
-        setTimeout(() => {
-          btnSubmit.disabled = false;
-          if (window.history.length > 1) {
-            window.history.back();
-          }
-        }, 1500);
+        showBanner("success", "已成功存入！手機本機與雲端皆已確認入庫。");
       } else {
-        btnSubmit.disabled = false;
-        btnSubmit.innerHTML = "<span>⚡ 重試雲端同步</span>";
-        btnSubmit.style.background = "#f59e0b";
-        showBanner("warning", "已安全保存在手機本機！目前處於離線狀態，恢復連線後將自動補傳。");
-        updatePendingBarUI();
+        btnSubmit.innerHTML = "<span>💾 已保底存在手機 (點此重試雲端)</span>";
+        btnSubmit.style.background = "#d97706";
+        showBanner("warning", "已 100% 保存在手機本機！目前處於離線狀態，網路恢復時將自動補傳。");
       }
+
+      // 展開完成操作選項
+      postSaveActions.style.display = "flex";
+      updatePendingBarUI();
     });
+
+    // 繼續存下一筆
+    if (btnNewCollect) {
+      btnNewCollect.addEventListener("click", () => {
+        inputUrl.value = "";
+        inputTitle.value = "";
+        inputNote.value = "";
+        postSaveActions.style.display = "none";
+        btnSubmit.innerHTML = "<span>💾 一鍵收藏至 AI 知識庫 (100% 本機保底)</span>";
+        btnSubmit.style.background = "var(--accent)";
+        showBanner("success", "請貼上或分享新網址。");
+      });
+    }
+
+    // 完成並關閉 (友善關閉)
+    if (btnDoneClose) {
+      btnDoneClose.addEventListener("click", () => {
+        if (window.history.length > 1) {
+          window.history.back();
+        } else {
+          window.close();
+        }
+      });
+    }
+
+    // ─── 9. 設定彈窗 ───
+    if (settingVaultId) settingVaultId.value = cloudVaultId;
+    if (settingGasUrl) settingGasUrl.value = gasApiUrl;
+
+    btnOpenSettings.addEventListener("click", () => {
+      if (pwaTestMsg) pwaTestMsg.style.display = "none";
+      if (settingVaultId) settingVaultId.value = cloudVaultId;
+      if (settingGasUrl) settingGasUrl.value = gasApiUrl;
+      settingsModal.style.display = "flex";
+    });
+    btnCloseSettings.addEventListener("click", () => settingsModal.style.display = "none");
+
+    btnSaveSettings.addEventListener("click", () => {
+      cloudVaultId = (settingVaultId.value || "").trim() || DEFAULT_VAULT_ID;
+      gasApiUrl = (settingGasUrl.value || "").trim();
+      localStorage.setItem("ai_cloud_vault_id", cloudVaultId);
+      localStorage.setItem("ai_knowledge_gas_url", gasApiUrl);
+      settingsModal.style.display = "none";
+      showBanner("success", "雲端設定已儲存！");
+      flushPendingSyncQueue(false);
+    });
+
+    if (btnGenVaultPwa) {
+      btnGenVaultPwa.addEventListener("click", () => {
+        if (!confirm("是否產生全新的共同雲端代碼？（電腦端也需要輸入此代碼以保持同步）")) return;
+        const newId = "vault_" + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+        settingVaultId.value = newId;
+        pwaTestMsg.style.display = "block";
+        pwaTestMsg.style.color = "#a7f3d0";
+        pwaTestMsg.innerText = `✅ 已產生新串流代碼 (${newId})！請點擊「儲存」並填入電腦端。`;
+      });
+    }
+
+    if (btnTestCloudPwa) {
+      btnTestCloudPwa.addEventListener("click", async () => {
+        const testGas = (settingGasUrl.value || "").trim();
+        const testVault = (settingVaultId.value || "").trim() || DEFAULT_VAULT_ID;
+
+        pwaTestMsg.style.display = "block";
+        pwaTestMsg.style.color = "#93c5fd";
+        pwaTestMsg.innerText = "⏳ 正在測試雲端連線...";
+
+        try {
+          const topic = getNtfyTopic(testVault);
+          const [ntfyRes, gasRes] = await Promise.allSettled([
+            fetch(`https://ntfy.sh/${topic}/json?poll=1&since=all`).then(r => r.ok ? r.text() : Promise.reject(new Error(`HTTP ${r.status}`))),
+            (testGas && testGas.startsWith("http"))
+              ? fetch(testGas, { method: "GET" }).then(r => r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`)))
+              : Promise.reject(new Error("未設定 GAS"))
+          ]);
+
+          const ntfyOk = ntfyRes.status === "fulfilled";
+          const gasOk = gasRes.status === "fulfilled" && gasRes.value?.success;
+
+          if (gasOk && ntfyOk) {
+            pwaTestMsg.style.color = "#a7f3d0";
+            pwaTestMsg.innerText = `✅ Google 試算表與即時串流佇列皆連線正常！`;
+          } else if (ntfyOk) {
+            pwaTestMsg.style.color = "#a7f3d0";
+            pwaTestMsg.innerText = `✅ 即時串流佇列連線正常！隨時可存，無容量限制。`;
+          } else if (gasOk) {
+            pwaTestMsg.style.color = "#a7f3d0";
+            pwaTestMsg.innerText = `✅ Google 試算表連線成功！`;
+          } else {
+            throw new Error("請確認網路連線或設定網址");
+          }
+        } catch (e) {
+          pwaTestMsg.style.color = "#fecaca";
+          pwaTestMsg.innerText = `❌ 連線異常: ${e.message}`;
+        }
+      });
+    }
 
     function showBanner(type, msg) {
       statusBanner.className = "status-banner " + type;
@@ -1002,19 +1384,51 @@
       } else {
         statusIcon.innerText = "✅";
       }
-      // 避免訊息內重複出現狀態圖示
       statusText.innerText = String(msg || "").replace(/^[✅❌⚠️🎉⚡]+\s*/, "");
       statusBanner.style.display = "flex";
     }
 
-    // 監聽手機恢復網路時自動背景補傳
+    // 網路恢復時自動續傳
     window.addEventListener("online", () => {
       flushPendingSyncQueue(false);
     });
 
-    // 初始化執行
+    // 使用者切回畫面時觸發補傳檢查
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "visible") {
+        flushPendingSyncQueue(true);
+      }
+    });
+
+    const btnSyncAllCloud = document.getElementById("btn-sync-all-cloud");
+    if (btnSyncAllCloud) {
+      btnSyncAllCloud.addEventListener("click", async () => {
+        btnSyncAllCloud.innerText = "⏳ 全量推播中...";
+        try {
+          const count = await autoBackfillLocalHistoryToCloud(false);
+          if (count > 0) {
+            showBanner("success", `🎉 已將手機內缺漏的 ${count} 筆歷史紀錄全數補傳至雲端！請至電腦點「同步手機收藏」。`);
+          } else {
+            showBanner("success", `✅ 雲端已包含手機全部 ${getLocalNotes().length} 筆紀錄，無任何遺漏！`);
+          }
+        } catch (e) {
+          showBanner("warning", "推播異常，請確認網路連線。");
+        } finally {
+          btnSyncAllCloud.innerText = "☁️ 全量重推雲端";
+          renderLocalHistoryUI();
+        }
+      });
+    }
+
+    // 初始化啟動
     updatePendingBarUI();
     parseShareTarget();
+    // 啟動後自動執行背景差額回補，將手機 localStorage 內曾被 4 筆限制或 12h 過期刷掉的紀錄自動補上雲端
+    setTimeout(() => {
+      autoBackfillLocalHistoryToCloud(false).then(c => {
+        if (c > 0) renderLocalHistoryUI();
+      });
+    }, 600);
   </script>
 </body>
 </html>
